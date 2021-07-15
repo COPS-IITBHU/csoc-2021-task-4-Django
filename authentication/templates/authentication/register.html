@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/logcs.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="login" >
+
+        <b><label class="tit">Sign up</label></b>
+        <hr style="border: groove 1px cyan;">
+        <form action="register" method="POST"> {% csrf_token %}
+            <label for="first_name" style="margin-left: 33.6%; color: rgb(59, 17, 17); font-size: xx-large;">First Name :</label>
+            <input type="text" name="first_name" placeholder="First Name" class="us_inp"><br>
+            <label for="last_name" style="margin-left: 33.6%; color: rgb(59, 17, 17); font-size: xx-large;">Last Name :</label>
+            <input type="text" name="last_name" placeholder="Last Name" class="us_inp"><br>
+            <label for="user_id" style="margin-left: 31%; color: rgb(59, 17, 17); font-size: xx-large;">User ID:</label>
+            <input type="text" name="username" placeholder="Username"class="us_inp"><br> 
+            <label for="pass" style="margin-left: 28%; color: rgb(59, 17, 17); font-size: xx-large;">Password:</label>
+            <input type="password" name="password" placeholder="Password" class="us_inp"><br>
+            <div id="alert"></div>
+            <input type="submit" id="reg" class="subm" value="Sign Up">
+            
+            <label> Already have an account? <a href="accounts/login">Log in</a></label>
+            
+       </form>
+    </div>
+    
+</body>
+</html>
+
+
+<style>
+
+.login{
+    position: absolute;
+    display: block;
+    background-color: floralwhite;
+    margin-top: 10%;
+    width: 50%;
+    height: fit-content;
+    margin-left: 25%;
+    
+    border: cyan ridge 10px;
+}
+
+.us_inp{
+    display: inline;
+    margin-right: auto;
+    margin-left: auto;
+    position: relative;
+    width: 30%;
+    height: 5%;
+    border: black ridge 5px ;
+    background-color: rgba(137, 43, 226, 0.096);
+    font-size: large;
+    color: rgb(32, 14, 32);
+    margin-bottom: 30px;
+}
+
+.subm{
+    display: block;
+    background-color: rgba(255, 217, 0, 0.705);
+    margin-right: auto;
+    margin-left: auto;
+    font-size: xx-large;
+    border: rgba(255, 217, 0, 0.397) 3px ridge;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.tit{
+    display: block;
+    text-align: center;
+    color: rgb(0, 0, 0);
+   font-size: 50px;
+
+}
+
+#alert{
+    color: red;
+    
+}
+
+</style>
+
+<script>
+    var data = JSON.parse("{{data|escapejs}}");
+
+    if(data["cas"] == 1){
+    document.getElementById("alert").innerHTML = "Enter information in proper format!";}
+    if(data["cas"] == 2){
+    document.getElementById("alert").innerHTML = "User id unavilable try for some different id!";}
+
+</script>

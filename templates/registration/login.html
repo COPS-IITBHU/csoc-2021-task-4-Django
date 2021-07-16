@@ -1,31 +1,26 @@
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/logcs.css">
-    <script src="../static/login.js"></script>
     <title>Document</title>
 </head>
 <body>
     <div class="login">
 
-        <b><label class="tit">Log in</label></b>
-        <hr style="border: groove 1px cyan;">
-        <form method="POST"> {% csrf_token %}
-            <label for="user_id" style="margin-left: 31%; color: rgb(59, 17, 17); font-size: xx-large;">User ID:</label>
-            <input type="text" name="username" id="user_id" class="us_inp">
-            <label for="pass" style="margin-left: 28%; color: rgb(59, 17, 17); font-size: xx-large;">Password:</label>
-            <input type="password" name="password" id="pass" class="us_inp">
-            <div id="alert" ></div>
-            <input type="submit" id="log" class="subm" value="Log in">
-           
-            <label> Need an account? <a href="/register">Sign up</a></label>
-       </form>
+    
+
+    <b><label class="tit">Log in</label></b>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Log In</button>
+    <label> Need an account? <a href="/register">Sign up</a></label>
+    </form>
+
+
     </div>
 
 </body>
@@ -44,7 +39,12 @@
     border: cyan ridge 10px;
 }
 
-.us_inp{
+label {
+   color: rgb(59, 17, 17); 
+   font-size: xx-large;
+}
+
+input {
     display: inline;
     margin-right: auto;
     margin-left: auto;
@@ -58,7 +58,7 @@
     margin-bottom: 30px;
 }
 
-.subm{
+button {
     display: block;
     background-color: rgba(255, 217, 0, 0.705);
     margin-right: auto;
@@ -77,9 +77,3 @@
 
 }
 
-#alert{
-    color: red;
-    
-}
-
-</style>

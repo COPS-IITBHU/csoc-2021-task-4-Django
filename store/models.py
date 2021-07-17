@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
@@ -8,7 +10,8 @@ class Book(models.Model):
     genre = models.CharField(max_length=50)
     description = models.TextField(null=True)
     mrp = models.PositiveIntegerField()
-    rating = models.FloatField(default=0.0)
+    rating = models.FloatField(default=-1)
+    number = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ('title',)
@@ -19,7 +22,7 @@ class Book(models.Model):
 
 class BookCopy(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    borrow_date = models.DateField(null=True, blank=True)
+    borrow_date = models.DateField(null=True, blank=True, default=timezone.now)
     # True status means that the copy is available for issue, False means unavailable
     status = models.BooleanField(default=False)
     borrower = models.ForeignKey(User, related_name='borrower', null=True, blank=True, on_delete=models.SET_NULL)
@@ -29,4 +32,11 @@ class BookCopy(models.Model):
             return f'{self.book.title}, {str(self.borrow_date)}'
         else:
             return f'{self.book.title} - Available'
+
+
+class BookRating(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    ratedBy = models.CharField(max_length=50)
+    rating = models.SmallIntegerField()
+
 

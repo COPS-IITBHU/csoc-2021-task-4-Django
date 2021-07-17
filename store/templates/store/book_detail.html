@@ -8,40 +8,122 @@
 <h2>Title: {{ book.title }}</h2>
 
 <dl>
-    <dt>Genre:</dt>
-    <dd>{{ book.genre }}</dd>
-    <dt>Author:</dt>
-    <dd>{{ book.author }}</dd>
-    <dt>Description:</dt>
-    <dd>{{ book.description }}</dd>
-    <dt>Rating:</dt>
-    <dd>{{ book.rating }}</dd>
-    <dt>MRP:</dt>
-    <dd>Rs. {{ book.mrp }}</dd>
-    <dt>Available Copies:</dt>
-    <dd>{{ num_available }}</dd>
+	<dt>Genre:</dt>
+	<dd>{{ book.genre }}</dd>
+	<dt>Author:</dt>
+	<dd>{{ book.author }}</dd>
+	<dt>Description:</dt>
+	<dd>{{ book.description }}</dd>
+	<dt>Rating:</dt>
+	<dd>{{ book.rating }}</dd>
+	<dt>MRP:</dt>
+	<dd>Rs. {{ book.mrp }}</dd>
+	<dt>Available Copies:</dt>
+	<dd>{{ num_available }}</dd>
+
+	{% if user.is_authenticated %}
+	<dt>
+		<span>Rate: </span>
+		<span class="dropdown">
+
+				
+					{% csrf_token %}
+					<select name="rating" id="ratingValue">
+						
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+						<option>6</option>
+						<option>7</option>
+						<option>8</option>
+						<option>9</option>
+						<option>10</option>
+	
+					</select>
+					<button class="btn btn-warning btn-sm" id="submitRating">Submit Rating</button>
+				
+
+		</span>
+		
+			
+		
+	</dt>
+
+	{% endif %}
 </dl>
-<button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+
+
+
+<div><button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button></div>
 <script>
-$("#loan-button").click(function(){
-    $.ajax({
-		url: "{% url 'loan-book' %}",
-		method: "POST",
-		data: {
-			bid: {{ book.id }}
+
+	// button for borrowing the book 
+	$("#loan-button").click(function () {
+
+
+
+
+		$.ajax({
+			url: "{% url 'loan-book' %}",
+			method: "POST",
+			data: {
+				bid: {{ book.id }}
 		},
-		success: function(data, status, xhr){
-			if(data['message'] == "success"){
-                alert("Book successfully issued");
-                window.location.replace("/books/loaned");
+		success: function (data, status, xhr) {
+			if (data['message'] == "success") {
+				alert("Book Issued Suceessfully");
+				window.location.replace("/books/loaned");
 			}
-			else{
-				alert("Unable to issue this book");
+			else {
+				alert("Not able to issue this book");
 			}
 		},
-		error: function(xhr, status, err){
+		error: function (xhr, status, err) {
+			alert("Something went wrong !");
+		}
+
+
+
+	})
+})
+
+
+$("#submitRating").click(function () {
+	
+	console.log("clicked on add rating")
+	var x = document.getElementById("ratingValue").selectedIndex;
+	rating = document.getElementById("ratingValue").options[x].value;
+	console.log(rating)
+
+
+
+
+
+		$.ajax({
+			url: "{% url 'rate-book' %}",
+			method: "POST",
+			data: {
+				bid: {{ book.id }},
+				rate:rating,
+		},
+		success: function (data, status, xhr) {
+			if (data['message'] == "success") {
+				alert("Book successfully rated");
+				window.location.replace("/books/");
+			}
+			else {
+				alert("Unable to rate this book");
+			}
+		},
+		error: function (xhr, status, err) {
 			alert("Some error occured");
 		}
+
+
+
+
 
 	})
 })

@@ -18,11 +18,13 @@
     </div>
     <div class="col-sm-3">
         Genre: <input type="text" name="genre" id="genre">
+     
     </div>
+   
+        
+    <div>  <button id="search_button" class="btn btn-primary">Search</button></div>
 </div>
-<div class="row">
-    <button id="search_button" class="btn btn-primary">Search</button>
-</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -44,13 +46,21 @@
         <td>{{ book.rating }}</td>
         <td>{{ book.mrp }}</td>
         </tr>
+        
         {% endfor %}
     </tbody>
 </table>
+
+{% for book in books %}
+{%empty%}
+<h6 style="color: red;">No Result found</h6>
+{% endfor %}
+
 <script>
 
 var base_url=location.protocol + '//' + location.host + location.pathname;
 
+// search button starts here 
 $("#search_button").click(function(){
     var final_url = base_url.replace(/\/$/, "");
     title_value = $("#title").val();
@@ -63,4 +73,5 @@ $("#search_button").click(function(){
 });
 
 </script>
+
 {% endblock %}

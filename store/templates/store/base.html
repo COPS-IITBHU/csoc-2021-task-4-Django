@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <a href="https://icons8.com/icon/6AGHyLA8bTw4/home"></a>
+  <a href="https://icons8.com/icon/95142/book"></a>
+  <a href="https://icons8.com/icon/23662/book-shelf"></a>
   <style>
       #nav{
           border: 2px solid black;
@@ -16,7 +19,7 @@
           /* width: 100vw;   uneffective due to the class sidebar-nav*/
           padding: 20px;
           color: green;
-          box-shadow:0px 3px 3px 3px grey;         
+          box-shadow:0px 3px 3px 3px black;         
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -46,6 +49,7 @@
           font-size: 25px;
           border: 2px solid black;
           margin-bottom: 20px;
+          box-shadow: black 2px 4px 4px 1px ;
       }
   </style>
   {% load static %}
@@ -62,8 +66,8 @@
         <div class="col-sm-2" id="nav">
         {% block sidebar %}
         <ul class="sidebar-nav">
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'book-list' %}">All books</a></li>
+            <a href="{% url 'index' %}"><img src="https://img.icons8.com/ios/50/000000/home--v2.png"/><br>Home</a><br>
+            <br><a href="{% url 'book-list' %}"><img src="https://img.icons8.com/ios/50/000000/book-shelf.png"/><br>Books</a>
         </ul>
         
         <ul class="sidebar-nav">

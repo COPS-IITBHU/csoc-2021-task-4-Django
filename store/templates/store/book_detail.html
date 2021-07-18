@@ -22,28 +22,33 @@
     <dd>{{ num_available }}</dd>
 </dl>
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+<form class="mt-3" action="/book/{{book.id}}/rate/" method="POST">
+    <label for="rating" class="form-label font-weight-bold"> Rating : </label>
+    <input type="number" min="0" max="10" class="form-control" id="rating" name="rating" required>
+    <button class="btn btn-primary mt-3"> Rate {{book.title}} </button> 
+</form>
 <script>
-$("#loan-button").click(function(){
-    $.ajax({
-		url: "{% url 'loan-book' %}",
-		method: "POST",
-		data: {
-			bid: {{ book.id }}
-		},
-		success: function(data, status, xhr){
-			if(data['message'] == "success"){
-                alert("Book successfully issued");
-                window.location.replace("/books/loaned");
-			}
-			else{
-				alert("Unable to issue this book");
-			}
-		},
-		error: function(xhr, status, err){
-			alert("Some error occured");
-		}
+    $("#loan-button").click(function(){
+        $.ajax({
+            url: "{% url 'loan-book' %}",
+            method: "POST",
+            data: {
+                bid: "{{book.id|escapejs}}"
+            },
+            success: function(data, status, xhr){
+                if(data['message'] == "success"){
+                    alert("Book successfully issued");
+                    window.location.replace("/books/loaned");
+                }
+                else{
+                    alert("Unable to issue this book");
+                }
+            },
+            error: function(xhr, status, err){
+                alert("Some error occured");
+            }
 
-	})
-})
+        })
+    })
 </script>
 {% endblock %}

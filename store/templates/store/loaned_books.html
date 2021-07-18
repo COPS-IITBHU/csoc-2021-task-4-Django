@@ -29,15 +29,34 @@
         <td>{{ copy.book.author }}</td>
         <td>{{ copy.book.genre }}</td>
         <td>{{ copy.borrow_date }}</td>
-        <td><button class="btn btn-primary" onclick="returnBook({{ copy.id }})">Return {{ copy.book.title }}</button></td>
+        <td><button class="btn btn-primary" onclick='returnBook("{{ copy.id|escapejs }}")'>Return {{ copy.book.title }}</button></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <script>
 // Fill in this function by yourself. It should make a post call to the returnBookView and display an appropriate message
-function returnBook(bid){
-    ;
+function returnBook(bid) {
+    $.ajax({
+        url: "{% url 'return-book' %}",
+        method: "POST",
+        data: {
+            bid: bid
+        },
+        success: function(data, status, xhr){
+            if(data['message'] == "success"){
+                alert("Book successfully returned");
+                window.location.replace("/books/loaned");
+            }
+            else{
+                alert("Unable to return this book");
+            }
+        },
+        error: function(xhr, status, err){
+            alert("Some error occured");
+        }
+
+    })
 }
 </script>
 {% endblock %}

@@ -26,7 +26,7 @@ def bookDetailView(request, bid):
 def bookListView(request):
     template_name = 'store/book_list.html'
     context = {
-        'books': None, # set this to the list of required books upon filtering using the GET parameters
+        'books': Book.objects.all(), # set this to the list of required books upon filtering using the GET parameters
                        # (i.e. the book search feature will also be implemented in this view)
     }
     get_data = request.GET

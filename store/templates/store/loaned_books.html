@@ -32,12 +32,32 @@
         <td><button class="btn btn-primary" onclick="returnBook({{ copy.id }})">Return {{ copy.book.title }}</button></td>
         </tr>
         {% endfor %}
+        {% if books %}
+        {% else %}
+        <tr>
+        <th></th>
+        <td><strong>Nothing issued!</strong></td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 <script>
 // Fill in this function by yourself. It should make a post call to the returnBookView and display an appropriate message
-function returnBook(bid){
-    ;
+function returnBook(bookid){
+       $.ajax({
+		url: "{% url 'return-book' %}",
+		method: "POST",
+		data: {
+			bid: bookid
+		},
+		success: function(data, status, xhr){
+			alert(data['message']);
+            window.location.replace("/books");
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+	})
 }
 </script>
 {% endblock %}

@@ -22,6 +22,9 @@
     <dd>{{ num_available }}</dd>
 </dl>
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+<button class="btn btn-warning font-weight-bold" id="rate-button">Rate Now</button>
+<label id = "setval" for="Rate" class="form-label font-weight-bold">5</label>
+<input type="range" id="getval" class="form-range" onchange="changeval()" min="0" max="10" step="1.0" id="Rate">
 <script>
 $("#loan-button").click(function(){
     $.ajax({
@@ -32,15 +35,36 @@ $("#loan-button").click(function(){
 		},
 		success: function(data, status, xhr){
 			if(data['message'] == "success"){
-                alert("Book successfully issued");
+                alert("Book successfully issued!");
                 window.location.replace("/books/loaned");
 			}
 			else{
-				alert("Unable to issue this book");
+				alert("Unable to issue this book!");
 			}
 		},
 		error: function(xhr, status, err){
-			alert("Some error occured");
+			alert("You are not logged in!");
+		}
+
+	})
+})
+function changeval(){
+	document.getElementById("setval").innerHTML=document.getElementById('getval').value;
+}
+$("#rate-button").click(function(){
+    $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+			bid: {{ book.id }},
+			rate: document.getElementById('getval').value,
+		},
+		success: function(data, status, xhr){
+            alert(data['message']);
+			location.reload();
+		},
+		error: function(xhr, status, err){
+			alert("You are not logged in!");
 		}
 
 	})

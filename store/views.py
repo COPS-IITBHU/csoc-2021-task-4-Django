@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 import re
+import datetime
  
 from django.db.models import Q
  
@@ -93,7 +94,23 @@ def loanBookView(request):
     If yes, then set the message to 'success', otherwise 'failure'
     '''
     # START YOUR CODE HERE
-    book_id = None # get the book id from post data
+    # get_data = request.POST.get('bid')
+    # print(get_data)
+    book_id = request.POST.get('bid') # get the book id from post data
+    # book = Book.objects.get(id__exact=book_id)
+    list = BookCopy.objects.filter(Q(book=Book.objects.get(id__exact=book_id)) & Q(available=True))
+    count = list.count()
+    if count>0:
+        b=BookCopy.objects.filter(Q(book=Book.objects.get(id__exact=book_id)) & Q(available=True))[0]
+        b.available=False
+        b.borrower=request.user
+        b.borrow_date=datetime.date.today()
+        b.save()
+        response_data['message'] = 'success'
+    else:
+        response_data['message'] = 'failure'
+    
+
 
 
     return JsonResponse(response_data)

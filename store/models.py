@@ -30,3 +30,10 @@ class BookCopy(models.Model):
         else:
             return f'{self.book.title} - Available'
 
+class BookRating(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    rater = models.CharField(max_length=122)
+    rated = models.BooleanField(default = False)
+    rating = models.SmallIntegerField(default=0)
+    def __str__(self):
+        return f'{self.book.title} by {self.rater} : {self.rated}'

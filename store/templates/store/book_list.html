@@ -45,6 +45,13 @@
         <td>{{ book.mrp }}</td>
         </tr>
         {% endfor %}
+        {% if books %}
+        {% else %}
+        <tr>
+        <th></th>
+        <td><strong>Nothing found!</strong></td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 <script>

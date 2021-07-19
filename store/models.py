@@ -20,13 +20,13 @@ class Book(models.Model):
 class BookCopy(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     borrow_date = models.DateField(null=True, blank=True)
-    # True status means that the copy is available for issue, False means unavailable
-    status = models.BooleanField(default=False)
+    # Available true means that the copy is available for issue, False means unavailable
+    available = models.BooleanField(default=True)
     borrower = models.ForeignKey(User, related_name='borrower', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        if self.borrow_date:
-            return f'{self.book.title}, {str(self.borrow_date)}'
-        else:
+        if self.available:
             return f'{self.book.title} - Available'
+        else:
+            return f'{self.book.title}, {str(self.borrow_date)}'
 

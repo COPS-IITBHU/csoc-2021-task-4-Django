@@ -8,6 +8,16 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <style>
+  .inputform{
+    width: fit-content;
+    margin: auto;
+    border: 2px solid black;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+  }
+  </style>
   {% load static %}
 </head>
 
@@ -30,6 +40,7 @@
             <li><a href="/logout">Logout</a></li>   
         {% else %}
         <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
         {% endif %} 
         </ul>
 

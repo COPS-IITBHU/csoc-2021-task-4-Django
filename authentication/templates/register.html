@@ -1,12 +1,8 @@
-{% extends 'base.html' %}
+{% extends "store/base.html" %}
 
-{% block title %}Register{% endblock title %}
-{% block nextpg %}Login{% endblock nextpg %}
-{% block nextpglink %}login{% endblock nextpglink %}
-{% block body %}
-    <div class="alert alert-danger alert-dismissible mt-0 mb-0 fade show" role="alert" style="display:{{visibility}};">
+{% block content %}
+    <div class="alert alert-danger mt-0 mb-0" role="alert" style="display:{{visibility}};">
     <strong>Same credentials are in database!</strong> Login using it.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <form class="inputform bg-primary mt-3" method="post" action="/register">
         {% csrf_token %}
@@ -24,4 +20,4 @@
         <input type="password" id="inputPassword" name="password" class="form-control mb-3 " placeholder="Password" required>
         <button class="btn btn-lg btn-success btn-block" type="submit">Register</button>
     </form>
-{% endblock body %}
+{% endblock content %}

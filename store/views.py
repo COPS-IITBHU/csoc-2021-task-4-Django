@@ -134,6 +134,6 @@ def rateBook(request):
     sum=0.0
     for i in range(len(bookratings)):
         sum=sum+bookratings[i].rating
-    book.rating=(float)(sum/len(bookratings))
+    book.rating=round((float)(sum/len(bookratings)), 1)
     book.save()
     return JsonResponse(response_data)

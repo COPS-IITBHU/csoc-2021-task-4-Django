@@ -17,7 +17,15 @@ def bookDetailView(request, bid):
         'num_available': None, # set this to the number of copies of the book available, or 0 if the book isn't available
     }
     # START YOUR CODE HERE
-    
+    book = get_object_or_404(Book, id=bid)
+    bookcopy = get_object_or_404(BookCopy, book=book)
+
+    context['book'] = book
+
+    if book.is_available:
+        context['num_available'] = len(bookcopy)
+    else:
+        context['num_available'] = 0
     
     return render(request, template_name, context=context)
 
@@ -31,7 +39,9 @@ def bookListView(request):
     }
     get_data = request.GET
     # START YOUR CODE HERE
-    
+    var = Book.objects.filter(title__icontains=get_data.get('title',''), author__icontains=get_data.get('author',''), genre__icontains=get_data.get('genre',''))
+
+    context['books'] = var
     
     return render(request, template_name, context=context)
 
@@ -46,8 +56,10 @@ def viewLoanedBooks(request):
     BookCopy model. Only those book copies should be included which have been loaned by the user.
     '''
     # START YOUR CODE HERE
-    
+    user = request.user
+    loanedBookCopy = BookCopy.objects.filter(borrower=user)
 
+    context['books'] = loanedBookCopy
 
     return render(request, template_name, context=context)
 
@@ -62,6 +74,16 @@ def loanBookView(request):
     If yes, then set the message to 'success', otherwise 'failure'
     '''
     # START YOUR CODE HERE
+    book = get_object_or_404(Book, id=request.POST.get('book_id'))
+    if book.is_available:
+        user = request.user
+        bookCopy = BookCopy.objects.get(book=book, borrower=None)
+        bookCopy.borrower = user
+        bookCopy.save()
+        response_data['message'] = 'success'
+    else:
+        response_data['message'] = 'failure'
+
     book_id = None # get the book id from post data
 
 

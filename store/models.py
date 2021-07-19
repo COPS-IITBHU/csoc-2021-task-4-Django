@@ -37,7 +37,7 @@ class BookCopy(models.Model):
         if self.borrow_date:
             return f'{self.book.title}, {str(self.borrow_date)}'
         else:
-            return f'{self.book.title} - Available'
+            return f'{self.book.title} - Available for borrowing'
 
 
 

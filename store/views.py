@@ -1,16 +1,20 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from http import HTTPStatus
 from store.models import *
 from django.shortcuts import get_object_or_404
 from datetime import date
 from django.http import JsonResponse
 from django.shortcuts import get_list_or_404
-from django.views.decorators.csrf import csrf_exempt
 
 
 # index function 
 def index(request):
     return render(request, 'store/index.html')
+
+
+
 
 # bookDetailView function 
 def bookDetailView(request, bid):
@@ -30,6 +34,11 @@ def bookDetailView(request, bid):
 
 
 @csrf_exempt
+
+
+
+
+
 # bookListView function
 def bookListView(request):
     template_name = 'store/book_list.html'
@@ -44,6 +53,10 @@ def bookListView(request):
     return render(request, template_name, context=context)
 
 @login_required
+
+
+
+
 # viewLoanedBooks function for the borrowed books
 def viewLoanedBooks(request):
     template_name = 'store/loaned_books.html'
@@ -60,10 +73,13 @@ def viewLoanedBooks(request):
 @login_required
 
 
+
+
+
 # loaned or borrowed book function as loanBookView
 def loanBookView(request):
     response_data = {
-        'message': None,
+        'message': None, # no message displayed here 
     }
     
     data = request.POST
@@ -88,10 +104,15 @@ def loanBookView(request):
 @csrf_exempt
 @login_required
 
+
+
+
+
+
 # function for returning the book 
 def returnBookView(request):
     response_data = {
-        'message': None,
+        'message': None, # no message displayed here 
     }
 
     data = request.POST
@@ -116,6 +137,10 @@ def returnBookView(request):
 @csrf_exempt
 @login_required
 
+
+
+
+
 # function for rating the book
 def rateBookView(request):
     
@@ -133,19 +158,26 @@ def rateBookView(request):
         rating.rating=rate
         oldRating.delete()
         rating.save()
+        # updating the rating here by deleting the previous one and adding the new 
         other=UserRating.objects.filter(book=book)
         rating_sum = 0.0
+        # declaring the variable for the sum of rating 
+
         for current in other:
             rating_sum += current.rating
+            # add the ratings here 
+
         book.rating = rating_sum/other.count()
         book.rating = round(book.rating,2)
         book.save()
+
+
         response_data={
-            'message':'success'
+            'message':'success' # in case of success 
         }
     else:
         response_data={
-            'message':'failure'
+            'message':'failure' # in case of incompletion of data
         }
     return JsonResponse(response_data)
 

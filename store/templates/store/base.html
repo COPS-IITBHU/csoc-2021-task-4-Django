@@ -64,12 +64,16 @@
 
         <div class="row">
         <div class="col-sm-2" id="nav">
+
+
         {% block sidebar %}
         <ul class="sidebar-nav">
             <a href="{% url 'index' %}"><img src="https://img.icons8.com/ios/50/000000/home--v2.png"/><br>Home</a><br>
             <br><a href="{% url 'book-list' %}"><img src="https://img.icons8.com/ios/50/000000/book-shelf.png"/><br>Books</a>
         </ul>
         
+
+
         <ul class="sidebar-nav">
         {% if user.is_authenticated %}
             <li>User: {{ user.first_name}} {{user.last_name}}</li>
@@ -77,16 +81,26 @@
             <li><a href="{% url 'logout' %}">Logout</a></li>   
         {% else %}
 
+
+
+
         <li><a href="{% url 'loginView' %}">Login</a></li>   
         <li><a href="{% url 'registerView' %}">Register</a></li>   
 
         {% endif %} 
         </ul>
 
+
+
+
         
         {% endblock %}
         </div>
 
+
+
+
+        
 
         <div class="col-sm-7" style="margin-top: 25px;">
         {% block content %}

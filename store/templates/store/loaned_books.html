@@ -29,15 +29,74 @@
         <td>{{ copy.book.author }}</td>
         <td>{{ copy.book.genre }}</td>
         <td>{{ copy.borrow_date }}</td>
-        <td><button class="btn btn-primary" onclick="returnBook({{ copy.id }})">Return {{ copy.book.title }}</button></td>
-        </tr>
-        {% endfor %}
-    </tbody>
+        <td>
+            <button type="button" class="btn btn-success mr-2" data-toggle="modal" data-target="#returnModal">
+                Return {{ copy.book.title }}
+              </button></td>
+        
+
+<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalTitle">User: {{ user.first_name }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="##">
+            <!-- <input type="hidden" name="itemsJson" id="itemsJson"> -->
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Rate {{ copy.book.title }}</label>
+                <select class="form-control" id="{{ copy.id }}" required>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                </select>
+              </div>
+
+            <button type="submit" class="btn btn-primary" onclick="returnBook('{{ copy.id }}')">Submit</button>
+          </form>
+        </div>
+    <div class="modal-footer">
+</div>
+
+    </tr>
+    {% endfor %}
+</tbody>
 </table>
+
 <script>
-// Fill in this function by yourself. It should make a post call to the returnBookView and display an appropriate message
 function returnBook(bid){
-    ;
+    $.ajax({
+		url: "{% url 'handlerating' %}",
+		method: "POST",
+		data: {
+			bid: bid,
+      rating:$('#'+bid).val()
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+              window.location.href = "/books/return/";
+			}
+			else{
+				alert("Unable to return this book");
+			}
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+
+	})
 }
+
 </script>
 {% endblock %}

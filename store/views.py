@@ -112,13 +112,15 @@ def returnBookView(request):
         'books': None,
     }
     tbook=Book.objects.all()
-    for i in tbook:
-        ibook=BookRating.objects.filter(book=i)
-        a=0
-        for j in ibook:
-            a=a+j.rating
-        i.rating=a/len(ibook)
-        i.save()
+    if len(tbook)!=0:
+        for i in tbook:
+            ibook=BookRating.objects.filter(book=i)
+            if len(ibook)!=0:
+                a=0
+                for j in ibook:
+                    a=a+j.rating
+                i.rating=a/len(ibook)
+                i.save()
     books = BookCopy.objects.filter(borrower=request.user)
     context['books'] = books
     return render(request, template_name, context=context)

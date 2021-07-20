@@ -45,7 +45,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form action="##">
+          <!-- <form> -->
             <!-- <input type="hidden" name="itemsJson" id="itemsJson"> -->
             <div class="form-group">
                 <label for="exampleFormControlSelect1">Rate {{ copy.book.title }}</label>
@@ -64,7 +64,7 @@
               </div>
 
             <button type="submit" class="btn btn-primary" onclick="returnBook('{{ copy.id }}')">Submit</button>
-          </form>
+          <!-- </form> -->
         </div>
     <div class="modal-footer">
 </div>
@@ -92,7 +92,7 @@ function returnBook(bid){
 			}
 		},
 		error: function(xhr, status, err){
-			alert("Some error occured");
+			alert("Some error occured,please try again");
 		}
 
 	})

@@ -27,7 +27,7 @@
 <br><br>
 {% if user.is_authenticated %}
 <form method="POST" action="rating/">{% csrf_token %}
-	Rate the Book (0-5) : <input class="mx-3 px-3" type='number' id='rating' name="rating" min=0 max=5 value=0.0>
+	Rate the Book (0-10) : <input class="mx-3 px-3" type='number' id='rating' name="rating" min=0 max=10 value=0>
 	<button class="btn btn-primary" id="rate-button" type="submit">Rate</button>
 </form>
 {% endif %}

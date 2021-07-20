@@ -125,6 +125,16 @@ to make this feature complete
 @csrf_exempt
 @login_required
 def returnBookView(request):
-    pass
-
+    response_data = {
+        'message': None,
+    }
+    print(request.POST.get('cid'))
+    copy_id = request.POST.get('cid')
+    c=BookCopy.objects.get(id__exact=copy_id)
+    c.borrow_date=None
+    c.available=True
+    c.borrower=None
+    c.save()
+    response_data['message'] = 'success'
+    return JsonResponse(response_data)
 

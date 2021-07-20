@@ -96,12 +96,20 @@ def handelrating(request):
         if len(ratedbook)==0:
             bookrating=BookRating.objects.create(book=book, rating=rating, ratedUser=request.user)
             bookrating.save()
+            response_data['message'] = "success"
         else:
             ratedbook=ratedbook[0]
             ratedbook.rating=rating
             ratedbook.save()
-        response_data['message'] = "success"
-        messages.success(request, "Book successfully return")
+            response_data['message'] = "success"
+       
+        if response_data['message'] == "success":
+            messages.success(request, "Book successfully return")
+            return JsonResponse(response_data)
+        else:
+            messages.error(request, "Book unsuccessfully return")
+            return JsonResponse(response_data)
+    else:
         return JsonResponse(response_data)
        
 @csrf_exempt
@@ -119,7 +127,7 @@ def returnBookView(request):
                 a=0
                 for j in ibook:
                     a=a+j.rating
-                i.rating=a/len(ibook)
+                i.rating=round(a/len(ibook),2)
                 i.save()
     books = BookCopy.objects.filter(borrower=request.user)
     context['books'] = books
@@ -153,7 +161,7 @@ def handleSignUp(request):
         myuser.first_name= fname
         myuser.last_name= lname
         myuser.save()
-        messages.success(request, " Your iLibrary card has been successfully created")
+        messages.success(request, " Your iLibrary card has been successfully created, start with login")
         return render(request, 'store/index.html')
 
     else:

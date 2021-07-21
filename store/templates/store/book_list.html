@@ -10,12 +10,17 @@
 
 <h3>Books list</h3>
 <div class="row">
+
     <div class="col-sm-3">
         Title: <input type="text" name="title" id="title">
     </div>
+
+
     <div class="col-sm-3">
         Author: <input type="text" name="author" id="author">
     </div>
+
+
     <div class="col-sm-3">
         Genre: <input type="text" name="genre" id="genre">
      
@@ -24,6 +29,9 @@
         
     <div>  <button id="search_button" class="btn btn-primary">Search</button></div>
 </div>
+
+
+
 
 <table class="table">
     <thead>
@@ -37,6 +45,10 @@
         </tr>
     </thead>
     
+
+
+
+
     <tbody>
         {% for book in books %}
         <tr>
@@ -50,6 +62,9 @@
         
         {% endfor %}
     </tbody>
+
+
+
 </table>
 
 {% for book in books %}
@@ -57,6 +72,11 @@
 <h6 style="color: red;">No Result found</h6>
 {% endfor %}
 
+
+
+
+
+<!-- scripts start here  -->
 <script>
 
 var base_url=location.protocol + '//' + location.host + location.pathname;

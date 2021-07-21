@@ -76,6 +76,8 @@
 			data: {
 				bid: {{ book.id }}
 		},
+
+
 		success: function (data, status, xhr) {
 			if (data['message'] == "success") {
 				alert("Book Issued Suceessfully");
@@ -117,17 +119,23 @@ $("#submitRating").click(function () {
 				bid: {{ book.id }},
 				rate:rating,
 		},
+
+
+
 		success: function (data, status, xhr) {
 			if (data['message'] == "success") {
 				alert("Book successfully rated");
 				window.location.replace("/books/");
 			}
 			else {
-				alert("Unable to rate this book");
+				alert("Failed to Rate this Book !");
 			}
 		},
+
+
+
 		error: function (xhr, status, err) {
-			alert("Some error occured");
+			alert("Process Failed !");
 		}
 
 

@@ -1,17 +1,25 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from http import HTTPStatus
 from store.models import *
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from datetime import date
 from django.http import JsonResponse
 from django.shortcuts import get_list_or_404
+from django.http import HttpResponse
+from http import HTTPStatus
+
+
+
 
 
 # index function 
 def index(request):
     return render(request, 'store/index.html')
+    # return HttpResponse ('index')
+
+
+
 
 
 
@@ -25,15 +33,23 @@ def bookDetailView(request, bid):
     }   
     
     book = get_object_or_404(Book,pk=bid)
-    bookcopy = get_list_or_404(BookCopy, book=bid, status=True)
+
+    bookcopy = get_list_or_404(BookCopy,
+     book=bid,
+     status=True)
 
     context['book']=book
     context['num_available']=len(bookcopy)
 
-    return render(request, template_name, context=context)
+    return render(request,
+     template_name,
+     context=context)
 
 
 @csrf_exempt
+
+
+
 
 
 
@@ -47,12 +63,20 @@ def bookListView(request):
     }
     get_data = request.GET
    
-    query = Book.objects.filter(title__icontains=get_data.get('title',''),author__icontains=get_data.get('author',''),genre__icontains=get_data.get('genre', ''))
+    query = Book.objects.filter(title__icontains=get_data.get('title',''),
+     author__icontains=get_data.get('author',''),
+     genre__icontains=get_data.get('genre', ''))
 
     context['books'] = query
-    return render(request, template_name, context=context)
+
+    return render(request,
+     template_name,
+     context=context)
 
 @login_required
+
+
+
 
 
 
@@ -67,10 +91,14 @@ def viewLoanedBooks(request):
     
     loanedbookcopy =  BookCopy.objects.filter(borrower=request.user)
     context['books'] = loanedbookcopy
-    return render(request, template_name, context=context)
+    return render(request,
+     template_name,
+     context=context)
 
 @csrf_exempt
 @login_required
+
+
 
 
 
@@ -92,6 +120,7 @@ def loanBookView(request):
     if len(bookcopy)==0:
         response_data['message'] = 'failure'
     else:    
+        # bookcopy[0].variable = value 
         bookcopy[0].borrower = request.user
         bookcopy[0].borrow_date = date.today()
         bookcopy[0].status = False
@@ -120,12 +149,13 @@ def returnBookView(request):
         bid = data.get('bid','')
     book_id = bid 
 
-    print ("CONSOLE LOG")
+    
     bookcopy = BookCopy.objects.filter(pk=book_id)
 
     if len(bookcopy)==0:
         response_data['message'] = 'failure'
     else:    
+        # bookcopy[0].variable = value 
         bookcopy[0].borrower = None
         bookcopy[0].borrow_date = None
         bookcopy[0].status = True
@@ -148,14 +178,18 @@ def rateBookView(request):
         data = request.POST
         bid=data.get('bid','')
         rate=data.get('rate',0.0)
-        print(bid)
-        print(rate)
+
+
         book = Book.objects.get(pk=bid)
         oldRating=UserRating.objects.filter(user=request.user,book=book)
         rating=UserRating()
+
+
         rating.book=book
         rating.user=request.user
         rating.rating=rate
+
+
         oldRating.delete()
         rating.save()
         # updating the rating here by deleting the previous one and adding the new 

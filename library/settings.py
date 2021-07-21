@@ -26,7 +26,7 @@ SECRET_KEY = '==e^87*tib$+f)9$46#-jc&toydks5v^g5ym7wq^shf5(hno3&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://django-library-task.herokuapp.com/','127.0.0.1']
 
 
 # Application definition

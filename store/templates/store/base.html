@@ -26,10 +26,11 @@
         <ul class="sidebar-nav">
         {% if user.is_authenticated %}
             <li>User: {{ user.first_name }}</li>
-            <li><a href="{% url 'view-loaned' %}">My Borrowed</a></li>
+            <li><a href="{% url 'view-loaned' %}">Borrowed Books</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>   
         {% else %}
-            <!-- <li><a href="{% url 'login'%}">Login</a></li>    -->
+            <li><a href="{% url 'loginView' %}">Login</a></li>   
+            <li><a href="{% url 'register' %}">Register</a></li>   
         {% endif %} 
         </ul>
 
@@ -42,5 +43,12 @@
         </div>
 
     </div>
+    {% if messages %}
+    <div class="alert alert-info" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+      </div>
+    {% endif %}
 </body>
 </html>

@@ -1,0 +1,17 @@
+{% extends "store/base.html" %}
+
+{% block title %}
+<title>Register</title>
+{% endblock %}
+
+{% block content %}
+<h2>Register</h2>
+    <br>
+    <div class="container">
+    <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button style="background-color:blue; color:white" class="btn btn-outline-info" type="submit">Register</button>
+    </form>
+    </div>
+{% endblock %}

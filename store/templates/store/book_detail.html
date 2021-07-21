@@ -23,36 +23,24 @@
 	{% if user.is_authenticated %}
 	<dt>
 		<span>Rate: </span>
-		<span class="dropdown">
-
-				
+		<span class="dropdown">		
 					{% csrf_token %}
 					<select name="rating" id="ratingValue">
-						
 						<option>1</option>
 						<option>2</option>
 						<option>3</option>
 						<option>4</option>
 						<option>5</option>
-						<option>6</option>
-						<option>7</option>
-						<option>8</option>
-						<option>9</option>
-						<option>10</option>
-	
 					</select>
-					<button class="btn btn-warning btn-sm" id="submitRating">Submit Rating</button>
-				
-
-		</span>
-		
-			
-		
+					<button class="btn btn-success btn-sm" id="submitRating">Submit Rating</button>
+		</span>	
 	</dt>
-
-	{% endif %}
 </dl>
+
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+{% else %}
+<p>Please <a href="{% url 'loginView' %}">login</a> or <a href="{% url 'register' %}">register</a> to issue the book</p>
+{% endif %}
 <script>
 $("#loan-button").click(function(){
     $.ajax({

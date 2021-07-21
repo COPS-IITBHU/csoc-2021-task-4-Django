@@ -2,7 +2,7 @@
 
 {% block title %}
 <title>
-    Books List | Library
+    Library
 </title>
 {% endblock %}
 
@@ -10,19 +10,29 @@
 
 <h3>Books list</h3>
 <div class="row">
+
     <div class="col-sm-3">
         Title: <input type="text" name="title" id="title">
     </div>
+
+
     <div class="col-sm-3">
         Author: <input type="text" name="author" id="author">
     </div>
+
+
     <div class="col-sm-3">
         Genre: <input type="text" name="genre" id="genre">
+     
     </div>
+   
+        
+    <div>  <button id="search_button" class="btn btn-primary">Search</button></div>
 </div>
-<div class="row">
-    <button id="search_button" class="btn btn-primary">Search</button>
-</div>
+
+
+
+
 <table class="table">
     <thead>
         <tr>
@@ -34,6 +44,11 @@
         <th scope="col">MRP</th>
         </tr>
     </thead>
+    
+
+
+
+
     <tbody>
         {% for book in books %}
         <tr>
@@ -44,23 +59,43 @@
         <td>{{ book.rating }}</td>
         <td>{{ book.mrp }}</td>
         </tr>
+        
         {% endfor %}
     </tbody>
+
+
+
 </table>
+
+{% for book in books %}
+{%empty%}
+<h6 style="color: red;">No Result found</h6>
+{% endfor %}
+
+
+
+
+
+<!-- scripts start here  -->
 <script>
 
 var base_url=location.protocol + '//' + location.host + location.pathname;
 
+// search button starts here 
 $("#search_button").click(function(){
     var final_url = base_url.replace(/\/$/, "");
     title_value = $("#title").val();
+
     final_url = final_url + "?title=" + encodeURIComponent(title_value);
     author_value = $("#author").val();
+
     final_url = final_url + "&author=" + encodeURIComponent(author_value);
     genre_value = $("#genre").val();
+    
     final_url = final_url + "&genre=" + encodeURIComponent(genre_value);
     window.location.replace(final_url);
 });
 
 </script>
+
 {% endblock %}

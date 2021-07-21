@@ -1,82 +1,220 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from store.models import *
+from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from store.models import *
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from datetime import date
+from django.http import JsonResponse
+from django.shortcuts import get_list_or_404
+from django.http import HttpResponse
+from http import HTTPStatus
 
-# Create your views here.
 
+
+
+
+# index function 
 def index(request):
     return render(request, 'store/index.html')
+    # return HttpResponse ('index')
 
+
+
+
+
+
+
+# bookDetailView function 
 def bookDetailView(request, bid):
     template_name = 'store/book_detail.html'
     context = {
-        'book': None, # set this to an instance of the required book
-        'num_available': None, # set this to the number of copies of the book available, or 0 if the book isn't available
-    }
-    # START YOUR CODE HERE
+        'book': None,
+        'num_available': None,
+    }   
     
-    
-    return render(request, template_name, context=context)
+    book = get_object_or_404(Book,pk=bid)
+
+    bookcopy = get_list_or_404(BookCopy,
+     book=bid,
+     status=True)
+
+    context['book']=book
+    context['num_available']=len(bookcopy)
+
+    return render(request,
+     template_name,
+     context=context)
 
 
 @csrf_exempt
+
+
+
+
+
+
+
+
+# bookListView function
 def bookListView(request):
     template_name = 'store/book_list.html'
     context = {
-        'books': None, # set this to the list of required books upon filtering using the GET parameters
-                       # (i.e. the book search feature will also be implemented in this view)
+        'books': None,
     }
     get_data = request.GET
-    # START YOUR CODE HERE
-    
-    
-    return render(request, template_name, context=context)
+   
+    query = Book.objects.filter(title__icontains=get_data.get('title',''),
+     author__icontains=get_data.get('author',''),
+     genre__icontains=get_data.get('genre', ''))
+
+    context['books'] = query
+
+    return render(request,
+     template_name,
+     context=context)
 
 @login_required
+
+
+
+
+
+
+
+# viewLoanedBooks function for the borrowed books
 def viewLoanedBooks(request):
     template_name = 'store/loaned_books.html'
     context = {
         'books': None,
     }
-    '''
-    The above key 'books' in the context dictionary should contain a list of instances of the 
-    BookCopy model. Only those book copies should be included which have been loaned by the user.
-    '''
-    # START YOUR CODE HERE
+
     
-
-
-    return render(request, template_name, context=context)
+    loanedbookcopy =  BookCopy.objects.filter(borrower=request.user)
+    context['books'] = loanedbookcopy
+    return render(request,
+     template_name,
+     context=context)
 
 @csrf_exempt
 @login_required
+
+
+
+
+
+
+
+# loaned or borrowed book function as loanBookView
 def loanBookView(request):
     response_data = {
-        'message': None,
+        'message': None, # no message displayed here 
     }
-    '''
-    Check if an instance of the asked book is available.
-    If yes, then set the message to 'success', otherwise 'failure'
-    '''
-    # START YOUR CODE HERE
-    book_id = None # get the book id from post data
+    
+    data = request.POST
+    if request.method=='POST':
+        bid = data.get('bid','')
+    book_id = bid 
 
+    bookcopy = BookCopy.objects.filter(book=book_id,status=True)
+
+    if len(bookcopy)==0:
+        response_data['message'] = 'failure'
+    else:    
+        # bookcopy[0].variable = value 
+        bookcopy[0].borrower = request.user
+        bookcopy[0].borrow_date = date.today()
+        bookcopy[0].status = False
+        bookcopy[0].save()
+        response_data['message'] = 'success'
 
     return JsonResponse(response_data)
 
-'''
-FILL IN THE BELOW VIEW BY YOURSELF.
-This view will return the issued book.
-You need to accept the book id as argument from a post request.
-You additionally need to complete the returnBook function in the loaned_books.html file
-to make this feature complete
-''' 
+
 @csrf_exempt
 @login_required
+
+
+
+
+
+
+# function for returning the book 
 def returnBookView(request):
-    pass
+    response_data = {
+        'message': None, # no message displayed here 
+    }
+
+    data = request.POST
+    if request.method=='POST':
+        bid = data.get('bid','')
+    book_id = bid 
+
+    
+    bookcopy = BookCopy.objects.filter(pk=book_id)
+
+    if len(bookcopy)==0:
+        response_data['message'] = 'failure'
+    else:    
+        # bookcopy[0].variable = value 
+        bookcopy[0].borrower = None
+        bookcopy[0].borrow_date = None
+        bookcopy[0].status = True
+        bookcopy[0].save()
+        response_data['message'] = 'success'
+
+    return JsonResponse(response_data)
+
+@csrf_exempt
+@login_required
+
+
+
+
+
+# function for rating the book
+def rateBookView(request):
+    
+    if request.method == "POST":
+        data = request.POST
+        bid=data.get('bid','')
+        rate=data.get('rate',0.0)
+
+
+        book = Book.objects.get(pk=bid)
+        oldRating=UserRating.objects.filter(user=request.user,book=book)
+        rating=UserRating()
+
+
+        rating.book=book
+        rating.user=request.user
+        rating.rating=rate
+
+
+        oldRating.delete()
+        rating.save()
+        # updating the rating here by deleting the previous one and adding the new 
+        other=UserRating.objects.filter(book=book)
+        rating_sum = 0.0
+        # declaring the variable for the sum of rating 
+
+        for current in other:
+            rating_sum += current.rating
+            # add the ratings here 
+
+        book.rating = rating_sum/other.count()
+        book.rating = round(book.rating,2)
+        book.save()
+
+
+        response_data={
+            'message':'success' # in case of success 
+        }
+    else:
+        response_data={
+            'message':'failure' # in case of incompletion of data
+        }
+    return JsonResponse(response_data)
+
+
 
 

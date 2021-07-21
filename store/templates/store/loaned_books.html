@@ -2,13 +2,13 @@
 
 {% block title %}
 <title>
-    Loaned Books List | Library
+    Library
 </title>
 {% endblock %}
 
 {% block content %}
 
-<h3>Loaned Books list</h3>
+<h3>Borrowed Books list</h3>
 
 <table class="table">
     <thead>
@@ -34,10 +34,47 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% for copy in books %}
+{%empty%}
+<h6 style="color: red;">No Books borrowed</h6>
+{% endfor %}
+
 <script>
 // Fill in this function by yourself. It should make a post call to the returnBookView and display an appropriate message
-function returnBook(bid){
-    ;
+
+
+
+function returnBook(id){
+
+    $.ajax({
+		url: "{% url 'return-book' %}",
+		method: "POST",
+		data: {bid: id},
+
+
+		success: function(data, status, xhr){
+
+
+			if(data['message'] == "success")
+            {
+                alert("Book Returned! ");
+                window.location.replace("/books/loaned");
+			}
+
+
+			else
+				alert("Failed to return this book");
+			
+		},
+
+
+
+		error: function(xhr, status, err){
+			alert("Process Failed !");
+		}
+
+	});
 }
 </script>
 {% endblock %}

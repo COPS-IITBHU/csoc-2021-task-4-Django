@@ -63,7 +63,7 @@ def loanBookView(request):
             bookcopy[0].save()
             response_data['message'] = 'success'
         else:
-            response_data['message'] = 'not available'
+            response_data['message'] = 'failiure'
     
 
 
@@ -73,48 +73,54 @@ def loanBookView(request):
 @csrf_exempt
 @login_required
 def returnBookView(request):
-    response_data = {
+     response_data = {
         'message': None,
     }
-    if request.method == 'POST':
-        bid = request.POST.get('bid', None)
-        bookcopy = BookCopy.objects.filter(book=bid, status=True)
-        if len(bookcopy) > 0:
-            bookcopy[0].borrower = None
-            bookcopy[0].borrower_date = date.today()
-            bookcopy[0].status = True
-            bookcopy[0].save()
-            response_data['message'] = 'success'
-        else:
-            response_data['message'] = 'failiure'
+     if request.method == 'POST':
+        bid = request.POST['id']
+        try:
+            bookcopy = BookCopy.objects.get(pk=bid)
+        except:
+            return JsonResponse({'message':'No such book'})  
 
-    return JsonResponse(response_data)
+        else:
+            bookcopy.status = True
+            bookcopy.borrower = None
+            bookcopy.borrow_date = None
+            bookcopy.save()
+            return JsonResponse({'message':'success'})
+          
 
 @csrf_exempt
 @login_required
 def rateBookView(request):
     
+    response_data = {
+        'message': None,
+    }
     if request.method == "POST":
         data = request.POST
         bid=data.get('bid','')
         rate=data.get('rate',0.0)
-        print(bid)
-        print(rate)
+
         book = Book.objects.get(pk=bid)
-        oldRating=BookRating.objects.filter(user=request.user,book=book)
+        prevrating=BookRating.objects.filter(user=request.user,book=book)
         rating=BookRating()
         rating.book=book
         rating.user=request.user
         rating.rating=rate
-        oldRating.delete()
+        prevrating.delete()
         rating.save()
         other=BookRating.objects.filter(book=book)
-        rating_sum = 0.0
-        for current in other:
-            rating_sum += current.rating
-        book.rating = rating_sum/other.count()
+        rating_total = 0.0
+
+        for r in other:
+            rating_total += r.rating
+        
+        book.rating = rating_total/len(other)
         book.rating = round(book.rating,2)
         book.save()
+
         response_data={
             'message':'success'
         }
@@ -123,6 +129,7 @@ def rateBookView(request):
             'message':'failure'
         }
 
+    
 
     return JsonResponse(response_data)
 

@@ -68,8 +68,8 @@ $("#loan-button").click(function(){
 
 $("#submitRating").click(function () {
 	
-	var x = document.getElementById("ratingValue").selectedIndex;
-	rating = document.getElementById("ratingValue").options[x].value;
+	var r = document.getElementById("ratingValue").selectedIndex;
+	rating = document.getElementById("ratingValue").options[r].value;
 
 		$.ajax({
 			url: "{% url 'rate-book' %}",

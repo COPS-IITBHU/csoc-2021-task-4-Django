@@ -37,13 +37,11 @@
 <script>
 // Fill in this function by yourself. It should make a post call to the returnBookView and display an appropriate message
 function returnBook(bid){
-    console.log("Clicked")
-    console.log(id)
     $.ajax({
 		url: "{% url 'return-book' %}",
 		method: "POST",
 		data: {
-			bid: id
+			'id': bid,
 		},
 		success: function(data, status, xhr){
 			if(data['message'] == "success"){

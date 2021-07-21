@@ -4,7 +4,7 @@ from store.models import *
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
+import json
 # Create your views here.
 
 def index(request):
@@ -17,8 +17,15 @@ def bookDetailView(request, bid):
         'num_available': None, # set this to the number of copies of the book available, or 0 if the book isn't available
     }
     # START YOUR CODE HERE
-    
-    
+    num_available = 0
+    context['book'] = Book.objects.get(id=bid)
+    book_title = Book.objects.get(id=bid).title
+    for book in BookCopy.objects.all():
+        if(book.book.title == book_title):
+            if book.borrower is None:
+                num_available+=1
+    context['num_available'] = num_available
+
     return render(request, template_name, context=context)
 
 
@@ -31,7 +38,18 @@ def bookListView(request):
     }
     get_data = request.GET
     # START YOUR CODE HERE
-    
+
+    books_list = []
+    for book in Book.objects.all():
+        if get_data:
+            if (book.title.startswith(get_data['title']) and 
+                book.author.startswith(get_data['author']) and 
+                book.genre.startswith(get_data['genre'])):
+                books_list.append(book)
+        else:
+            books_list.append(book)
+
+    context['books'] = books_list
     
     return render(request, template_name, context=context)
 
@@ -47,8 +65,15 @@ def viewLoanedBooks(request):
     '''
     # START YOUR CODE HERE
     
+    username = request.user.username
 
+    books_list = []
+    for bookCpy in BookCopy.objects.all():
+        if bookCpy.borrower != None:
+            if bookCpy.borrower.username == username:
+                books_list.append(bookCpy)
 
+    context['books'] = books_list
     return render(request, template_name, context=context)
 
 @csrf_exempt
@@ -62,8 +87,19 @@ def loanBookView(request):
     If yes, then set the message to 'success', otherwise 'failure'
     '''
     # START YOUR CODE HERE
-    book_id = None # get the book id from post data
+    book_id = int(request.POST['bid'])# get the book id from post data
 
+    book_title = Book.objects.get(id=book_id).title
+    done = False
+    for bookCpy in BookCopy.objects.all():
+        if bookCpy.book.title == book_title and bookCpy.borrower is None:
+            response_data['message'] = 'success'
+            bookCpy.borrower = request.user
+            bookCpy.save()
+            done = True
+            break
+    if not done:
+        response_data['message'] = 'failure'
 
     return JsonResponse(response_data)
 
@@ -77,6 +113,46 @@ to make this feature complete
 @csrf_exempt
 @login_required
 def returnBookView(request):
-    pass
+    response_data = {
+        'message': 'failure',
+    }
+    book_id = int(request.POST['bid'])
+    book = BookCopy.objects.get(id=book_id)
 
+    book.borrower = None
+    response_data['message'] = 'success'
+    book.save()
 
+    return JsonResponse(response_data)
+
+@csrf_exempt
+@login_required
+def rateBookView(request):
+    
+    response_data = {
+        'message': None,
+    }
+    book_id = int(request.POST['bid'])
+    book_rating = float(request.POST['rating'])
+    book = Book.objects.get(id=book_id)
+
+    if(Ratings.objects.filter(user=request.user, book=book).exists()):
+        print("I do exist")
+        prev_rating = Ratings.objects.get(user=request.user, book=book)
+        print("\nUser: ", request.user.username, " Store: ", prev_rating.prev_rating, "\n")
+        book.rating = ((book.rating * len(Ratings.objects.filter(book=book))) - prev_rating.prev_rating + book_rating)/len(Ratings.objects.filter(book=book))
+        prev_rating.prev_rating = book_rating
+        prev_rating.save()
+    else:
+        print("I do not exist")
+        temp_book_rating = (book.rating * len(Ratings.objects.filter(book=book)))
+        Ratings.objects.create(user=request.user, book=book, prev_rating= 0.0).save()
+        book.rating = (temp_book_rating + book_rating)/len(Ratings.objects.filter(book=book))
+        prev_rating = Ratings.objects.get(user=request.user, book=book)
+        prev_rating.prev_rating = book_rating
+        prev_rating.save()
+    
+    book.save()
+    response_data['message'] = 'success'
+
+    return JsonResponse(response_data)

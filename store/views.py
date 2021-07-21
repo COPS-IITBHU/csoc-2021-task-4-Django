@@ -161,7 +161,10 @@ def handleSignUp(request):
         myuser.first_name= fname
         myuser.last_name= lname
         myuser.save()
-        messages.success(request, " Your iLibrary card has been successfully created, start with login")
+        user=authenticate(username=username, password=pass1)
+        if user is not None:
+            login(request, user)
+        messages.success(request, " Your iLibrary card has been successfully created")
         return render(request, 'store/index.html')
 
     else:

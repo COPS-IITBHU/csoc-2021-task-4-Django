@@ -56,14 +56,14 @@ def loanBookView(request):
     if request.method == 'POST':
         bid = request.POST.get('bid', None)
         bookcopy = BookCopy.objects.filter(book=bid, status=True)
-        if len(bookcopy) > 0:
+        if len(bookcopy) == 0:
+            response_data['message'] = 'failiure'
+        else:
             bookcopy[0].borrower = request.user
             bookcopy[0].borrower_date = date.today()
             bookcopy[0].status = False
             bookcopy[0].save()
             response_data['message'] = 'success'
-        else:
-            response_data['message'] = 'failiure'
     
 
 

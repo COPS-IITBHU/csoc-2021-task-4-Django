@@ -126,9 +126,10 @@ def rateBook(request):
         except:
             num=boo_k.total_rated
             boo_k.rating=(num*(boo_k.rating)+int(request.POST['rating']))/(num+1)
+            boo_k.total_rated+=1
             boo_k.save()
             BookRate.objects.create(book_rated=boo_k,user_name=request.user,user_rating=int(request.POST['rating']))
-            boo_k.total_rated+=1
+
         response_data['message']='success'
     else:
         response_data['message']='failure'

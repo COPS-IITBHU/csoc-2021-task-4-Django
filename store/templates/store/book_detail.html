@@ -20,7 +20,15 @@
     <dd>Rs. {{ book.mrp }}</dd>
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
-</dl>
+
+<div style="display: flex;">
+<form action="">
+<label for="rating">Rate this book here</label>
+<input id="rating" type="number" min='0' max='10' name="rating">
+</form>
+<button style="margin-left:15px; height: 30px;" onclick="rate(document.getElementById('rating'))">Rate</button>
+</div>
+
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
 <script>
 $("#loan-button").click(function(){
@@ -45,5 +53,32 @@ $("#loan-button").click(function(){
 
 	})
 })
+
+function rate(a){
+	if(a.value){
+		$.ajax({
+            url: "{% url 'rate-book' %}",
+            method: "POST",
+            data: {
+                rating:a.value,
+				bid: {{book.id}}
+            },
+            success: function(data, status, xhr){
+                if(data['message'] == "success"){
+                    alert("Book successfully rated");
+                    window.location.reload()
+                }
+                else{
+                    alert("Unable to rate this book");
+                }
+            },
+            error: function(xhr, status, err){
+                alert("Some error occured");
+            }
+
+        })
+    }
+	a.value=''
+}
 </script>
 {% endblock %}

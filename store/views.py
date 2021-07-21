@@ -22,7 +22,6 @@ def bookDetailView(request, bid):
     book=get_object_or_404(Book,id=bid)
     context['num_available'] =BookCopy.objects.filter(book=book,status=True).count()
     context['book']=book
-    print(context['num_available'])
     return render(request, template_name, context=context)
 
 
@@ -106,3 +105,32 @@ def returnBookView(request):
 
     return JsonResponse(response_data)
 
+@csrf_exempt
+@login_required
+def rateBook(request):
+    response_data = {
+        'message': None,
+    }
+    # START YOUR CODE HERE
+    book_id = None # get the book id from post data
+    book=Book.objects.filter(id=request.POST['bid'])
+    if book:
+        boo_k=Book.objects.filter(id=request.POST['bid'])[0]
+        try:
+            ratingbook=BookRate.objects.filter(book_rated=boo_k)[0]
+            num=boo_k.total_rated
+            boo_k.rating=(num*(boo_k.rating)-ratingbook.user_rating+int(request.POST['rating']))/num
+            boo_k.save()
+            ratingbook.user_rating=int(request.POST['rating'])
+            ratingbook.save()
+        except:
+            num=boo_k.total_rated
+            boo_k.rating=(num*(boo_k.rating)+int(request.POST['rating']))/(num+1)
+            boo_k.save()
+            BookRate.objects.create(book_rated=boo_k,user_name=request.user,user_rating=int(request.POST['rating']))
+            boo_k.total_rated+=1
+        response_data['message']='success'
+    else:
+        response_data['message']='failure'
+
+    return JsonResponse(response_data)

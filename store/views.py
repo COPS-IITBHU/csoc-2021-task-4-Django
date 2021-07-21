@@ -102,8 +102,9 @@ def rateBookView(request):
         data = request.POST
         bid=data.get('bid','')
         rate=data.get('rate',0.0)
-
         book = Book.objects.get(pk=bid)
+        book.rate = rate
+
         prevrating=BookRating.objects.filter(user=request.user,book=book)
         rating=BookRating()
         rating.book=book

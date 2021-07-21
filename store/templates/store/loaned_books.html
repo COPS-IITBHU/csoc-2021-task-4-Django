@@ -34,10 +34,30 @@
         {% endfor %}
     </tbody>
 </table>
+
 <script>
 // Fill in this function by yourself. It should make a post call to the returnBookView and display an appropriate message
-function returnBook(bid){
-    ;
-}
+    function returnBook(bid){
+        $.ajax({
+            url: "{% url 'return-book' %}",
+            method: "POST",
+            data: {
+                bid: bid,
+            },
+            success: function(data, status, xhr){
+                if(data['message'] == "success"){
+                    alert("Book successfully returned");
+                    window.location.reload()
+                }
+                else{
+                    alert("Unable to return this book");
+                }
+            },
+            error: function(xhr, status, err){
+                alert("Some error occured");
+            }
+
+        })
+    }
 </script>
 {% endblock %}

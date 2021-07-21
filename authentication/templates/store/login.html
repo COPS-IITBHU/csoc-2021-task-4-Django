@@ -1,0 +1,27 @@
+{% extends "store/base.html" %}
+{% block title %}
+<title>LOGIN</title>
+{% endblock %}
+
+{% block content %}
+<h3>LOGIN</h3>
+<form method="POST" action="/accounts/login/">{% csrf_token %}
+    <div class="row">
+        <div class="col-sm-3">
+            Username : <input type="text" name="username" id="username">
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-sm-3">
+            Password : <input type="password" name="password" id="password">
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class="col-1"></div>
+        <button class="btn btn-primary col-1" id="login-button" type="submit">Login</button>
+    </div>
+</form>
+{% endblock %}

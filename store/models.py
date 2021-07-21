@@ -30,3 +30,7 @@ class BookCopy(models.Model):
         else:
             return f'{self.book.title} - Available'
 
+class BRating(models.Model):
+    critic = models.ForeignKey(User, related_name='critic', null=True, blank=True, on_delete=models.SET_NULL)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    rating=models.FloatField(default=0.0)

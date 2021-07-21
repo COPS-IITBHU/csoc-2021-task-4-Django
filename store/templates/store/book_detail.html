@@ -8,38 +8,49 @@
 <h2>Title: {{ book.title }}</h2>
 
 <dl>
-    <dt>Genre:</dt>
-    <dd>{{ book.genre }}</dd>
-    <dt>Author:</dt>
-    <dd>{{ book.author }}</dd>
-    <dt>Description:</dt>
-    <dd>{{ book.description }}</dd>
-    <dt>Rating:</dt>
-    <dd>{{ book.rating }}</dd>
-    <dt>MRP:</dt>
-    <dd>Rs. {{ book.mrp }}</dd>
-    <dt>Available Copies:</dt>
-    <dd>{{ num_available }}</dd>
+	<dt>Genre:</dt>
+	<dd>{{ book.genre }}</dd>
+	<dt>Author:</dt>
+	<dd>{{ book.author }}</dd>
+	<dt>Description:</dt>
+	<dd>{{ book.description }}</dd>
+	<dt>Rating:</dt>
+	<dd>{{ book.rating }}</dd>
+	<dt>MRP:</dt>
+	<dd>Rs. {{ book.mrp }}</dd>
+	<dt>Available Copies:</dt>
+	<dd>{{ num_available }}</dd>
 </dl>
+{% if num_available %}
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+{% endif %}
+<br><br>
+{% if user.is_authenticated %}
+<form method="POST" action="rating/">{% csrf_token %}
+	Rate the Book (0-10) : <input class="mx-3 px-3" type='number' id='rating' name="rating" min=0 max=10 value=0>
+	<button class="btn btn-primary" id="rate-button" type="submit">Rate</button>
+</form>
+{% endif %}
 <script>
-$("#loan-button").click(function(){
-    $.ajax({
-		url: "{% url 'loan-book' %}",
-		method: "POST",
-		data: {
-			bid: {{ book.id }}
+	$("#loan-button").click(function () {
+
+		$.ajax({
+			url: "{% url 'loan-book' %}",
+			method: "POST",
+			data: {
+				bid: {{ book.id }}
 		},
-		success: function(data, status, xhr){
-			if(data['message'] == "success"){
-                alert("Book successfully issued");
-                window.location.replace("/books/loaned");
+		success: function (data, status, xhr) {
+			if (data['message'] == "success") {
+				alert("Book successfully issued");
+				window.location.replace("/books/loaned");
 			}
-			else{
-				alert("Unable to issue this book");
+			else {
+				alert("Unable to issue the book\nYou need to Login/Register!");
+				window.location.replace("/accounts/login");
 			}
 		},
-		error: function(xhr, status, err){
+		error: function (xhr, status, err) {
 			alert("Some error occured");
 		}
 

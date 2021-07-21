@@ -28,7 +28,7 @@ $("#loan-button").click(function(){
 		url: "{% url 'loan-book' %}",
 		method: "POST",
 		data: {
-			bid: {{ book.id }}
+			bid: "{{ book.id }}"
 		},
 		success: function(data, status, xhr){
 			if(data['message'] == "success"){

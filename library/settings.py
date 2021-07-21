@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '==e^87*tib$+f)9$46#-jc&toydks5v^g5ym7wq^shf5(hno3&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['https://django-library-task.herokuapp.com/','127.0.0.1']
 
@@ -129,7 +129,3 @@ LOGOUT_REDIRECT_URL = '/'
 # Activate Django-Heroku.
 django_heroku.settings(locals())
 
-# Heroku: Update database configuration from $DATABASE_URL.
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)

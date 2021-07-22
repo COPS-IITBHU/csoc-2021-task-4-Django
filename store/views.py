@@ -50,9 +50,6 @@ def bookListView(request):
     title = request.GET.get('title', '')
     author = request.GET.get('author', '')
     genre = request.GET.get('genre', '')
-    print(title)
-    print(author)
-    print(genre)
     context['books'] = Book.objects.filter(
             Q(title__icontains=title) & Q(author__icontains=author) & Q(genre__icontains=genre))
     

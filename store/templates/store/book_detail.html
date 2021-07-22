@@ -16,8 +16,10 @@
     <dd>{{ book.description }}</dd>
     <dt>Rating:</dt>
     <dd>{{ book.rating }}</dd>
+	{% if user.is_authenticated %}
 	<dt>You rated:</dt>
-    <dd>{{ your_rating }}</dd>  
+    <dd>{{ your_rating }}</dd> 
+	{% endif %}
     <dt>MRP:</dt>
     <dd>Rs. {{ book.mrp }}</dd>
     <dt>Available Copies:</dt>

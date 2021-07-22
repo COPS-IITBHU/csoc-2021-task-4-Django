@@ -27,11 +27,11 @@ def bookDetailView(request, bid):
     list = BookCopy.objects.filter(Q(book=Book.objects.get(id__exact=bid)) & Q(available=True))
     count = list.count()
     context['num_available'] = count
-
-    rate = Review.objects.filter(Q(book_reviewed=Book.objects.get(id__exact=bid)) & Q(reviewer=request.user))
-    if rate.count()>0:
-        x=rate[0].rating
-        context['your_rating']=x
+    if request.user.is_authenticated:
+        rate = Review.objects.filter(Q(book_reviewed=Book.objects.get(id__exact=bid)) & Q(reviewer=request.user))
+        if rate.count()>0:
+            x=rate[0].rating
+            context['your_rating']=x
     
     
     return render(request, template_name, context=context)

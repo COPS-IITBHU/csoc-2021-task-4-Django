@@ -20,12 +20,18 @@ def bookDetailView(request, bid):
     context = {
         'book': None, # set this to an instance of the required book
         'num_available': None, # set this to the number of copies of the book available, or 0 if the book isn't available
+        'your_rating': 'You have not yet rated this book',
     }
     # START YOUR CODE HERE
     context['book'] = Book.objects.get(id__exact=bid)
     list = BookCopy.objects.filter(Q(book=Book.objects.get(id__exact=bid)) & Q(available=True))
     count = list.count()
     context['num_available'] = count
+
+    rate = Review.objects.filter(Q(book_reviewed=Book.objects.get(id__exact=bid)) & Q(reviewer=request.user))
+    if rate.count()>0:
+        x=rate[0].rating
+        context['your_rating']=x
     
     
     return render(request, template_name, context=context)
@@ -41,28 +47,14 @@ def bookListView(request):
     get_data = request.GET
     print(get_data)
     # START YOUR CODE HERE
-    # <QueryDict: {'title': ['chemisty'], 'author': ['o p tandon'], 'genre': ['science chemistry']}>
     title = request.GET.get('title', '')
     author = request.GET.get('author', '')
     genre = request.GET.get('genre', '')
     print(title)
     print(author)
     print(genre)
-    # fileredList1 = Book.objects.filter(title__icontains=title)
-    # fileredList2 = fileredList1.objects.filter(author__icontains=author)
-    # fileredList3 = fileredList2.objects.filter(genre__icontains=genre)
-    # context['books']= fileredList3
-    # options = {}
-    # for key in ('title', 'author', 'genre'):
-    #     value = request.GET.get(key)
-    #     if value:
-    #         options[key] = value
-    # context['books'] = Book.objects.filter(**options)
-
     context['books'] = Book.objects.filter(
             Q(title__icontains=title) & Q(author__icontains=author) & Q(genre__icontains=genre))
-    # context['books']= Book.objects.filter(get_data)
-    
     
     return render(request, template_name, context=context)
 
@@ -78,9 +70,6 @@ def viewLoanedBooks(request):
     '''
     # START YOUR CODE HERE
     context['books'] = BookCopy.objects.filter(borrower=request.user)
-    
-
-
     return render(request, template_name, context=context)
 
 @csrf_exempt
@@ -94,10 +83,7 @@ def loanBookView(request):
     If yes, then set the message to 'success', otherwise 'failure'
     '''
     # START YOUR CODE HERE
-    # get_data = request.POST.get('bid')
-    # print(get_data)
     book_id = request.POST.get('bid') # get the book id from post data
-    # book = Book.objects.get(id__exact=book_id)
     list = BookCopy.objects.filter(Q(book=Book.objects.get(id__exact=book_id)) & Q(available=True))
     count = list.count()
     if count>0:
@@ -109,10 +95,6 @@ def loanBookView(request):
         response_data['message'] = 'success'
     else:
         response_data['message'] = 'failure'
-    
-
-
-
     return JsonResponse(response_data)
 
 '''
@@ -138,3 +120,33 @@ def returnBookView(request):
     response_data['message'] = 'success'
     return JsonResponse(response_data)
 
+@csrf_exempt
+@login_required
+def rateBookView(request):
+    response_data = {
+        'message': None,
+    }
+    
+    book_id = request.POST.get('bid')
+    rateing = float(request.POST.get('brate'))
+    list_book = Review.objects.filter(book_reviewed=Book.objects.get(id__exact=book_id))
+    list_user_book = Review.objects.filter(Q(book_reviewed=Book.objects.get(id__exact=book_id)) & Q(reviewer=request.user))
+    if len(list_user_book)==0:
+        b=Book.objects.get(id__exact=book_id)
+        b.rating=((b.rating*len(list_book))+rateing)/(len(list_book)+1)
+        b.save()
+        c=Review(book_reviewed=Book.objects.get(id__exact=book_id), rating=rateing, reviewer=request.user)
+        c.save()
+    else:
+        c=Review.objects.filter(Q(book_reviewed=Book.objects.get(id__exact=book_id)) & Q(reviewer=request.user))[0]
+        previous_rating_by_user = c.rating
+        c.rating = rateing
+        c.save()
+        b = Book.objects.get(id__exact=book_id)
+        previous_rating_of_book = b.rating
+        new_rating = ((previous_rating_of_book*len(list_book))-previous_rating_by_user+rateing)/len(list_book)
+        b.rating=new_rating
+        b.save()
+
+    response_data['message'] = 'success'
+    return JsonResponse(response_data)

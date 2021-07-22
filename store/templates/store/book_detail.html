@@ -16,12 +16,19 @@
     <dd>{{ book.description }}</dd>
     <dt>Rating:</dt>
     <dd>{{ book.rating }}</dd>
+	<dt>You rated:</dt>
+    <dd>{{ your_rating }}</dd>  
     <dt>MRP:</dt>
     <dd>Rs. {{ book.mrp }}</dd>
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
+	{% if user.is_authenticated %}
+	<dt>Rate {{ book.title }}:</dt>
+    <input type="number" id="rate" name="rate" min="0" max="10">
+	<button class="btn btn-primary" id="rate-button" type="submit">Rate</button>
 </dl>
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+{% endif %}
 <script>
 $("#loan-button").click(function(){
     $.ajax({
@@ -44,6 +51,29 @@ $("#loan-button").click(function(){
 		}
 
 	})
+})
+$("#rate-button").click(function(){
+
+    $.ajax({
+		url: "{% url 'rate-book' %}",  
+		method: "POST",
+		data: {
+			bid: {{ book.id }},
+			brate: $("#rate").val()
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+                alert("Book Rated successfully");
+                window.location.replace("/books");
+			}
+			else{
+				alert("Unable to rate this book");
+			}
+		},
+		error: function(xhr, status, err){
+			alert(err);
+		}
+	})    
 })
 </script>
 {% endblock %}

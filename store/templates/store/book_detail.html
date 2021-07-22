@@ -21,7 +21,42 @@
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
 </dl>
-<button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+{% if num_available %}
+<button class="btn btn-primary btn-lg" id="loan-button">Loan {{ book.title }}</button>
+{% else %}
+<b>Uh Oh! It seems that no copies are availaible. PLease try again later.</b>
+{% endif %}
+<br><br>
+{% if user.is_authenticated %}
+<form method="POST" action="rating/">
+	
+	<b>Rate</b> : 
+	<span class="dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">		
+		{% csrf_token %}
+		<select name="rating" id="Value">
+			<option>0</option>
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option>4</option>
+			<option>5</option>
+			<option>6</option>
+			<option>7</option>
+			<option>8</option>
+			<option>9</option>
+			<option>10</option>
+		</select>
+	</span>	
+	<br>
+	<br>
+	<div>
+		<button class="btn btn-success btn-lg" id="submit-rating">Rate {{ book.title }}</button>
+	</div>
+
+</form>
+{% else %}
+       <b> User needs to login in order to rate the book!</b>
+{% endif %}
 <script>
 $("#loan-button").click(function(){
     $.ajax({

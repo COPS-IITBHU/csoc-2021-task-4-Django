@@ -6,6 +6,7 @@ urlpatterns = [
     path('books/', bookListView, name="book-list"),
     path('book/<int:bid>/', bookDetailView, name='book-detail' ),
     path('books/loaned/', viewLoanedBooks, name="view-loaned"),
+    path('books/rate/', rateBookView, name="rate-book"),
     path('books/loan/', loanBookView, name="loan-book"),
     path('books/return/', returnBookView, name="return-book"),
 ]

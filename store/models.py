@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
 # Create your models here.
 
@@ -30,3 +31,14 @@ class BookCopy(models.Model):
         else:
             return f'{self.book.title} - Available'
 
+
+class BookRating(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0, validators=[
+            MaxValueValidator(10),
+            MinValueValidator(0)
+        ])
+    user = models.ForeignKey(User, related_name='user', null=True, blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f'{self.book.title}'

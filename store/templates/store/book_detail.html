@@ -20,9 +20,20 @@
     <dd>Rs. {{ book.mrp }}</dd>
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
+	{% if user.is_authenticated %}
+	<dt>Rate {{ book.title }}:</dt>
+    <input type="number" id="rate" name="rate" min="0" max="10">
+	<button class="btn btn-primary" id="rate-button" type="submit">Rate</button>
+	{% comment %} {% if messages %}
+    {% for message in messages %}
+    {% if message.tags %}  <script>alert("{{ message }}")</script> {% endif %}
+    {% endfor %}
+    {% endif %} {% endcomment %}
 </dl>
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+{% endif %}
 <script>
+
 $("#loan-button").click(function(){
     $.ajax({
 		url: "{% url 'loan-book' %}",
@@ -33,7 +44,7 @@ $("#loan-button").click(function(){
 		success: function(data, status, xhr){
 			if(data['message'] == "success"){
                 alert("Book successfully issued");
-                window.location.replace("/books/loaned");
+                window.location.replace("/store/books/loaned");
 			}
 			else{
 				alert("Unable to issue this book");
@@ -42,8 +53,39 @@ $("#loan-button").click(function(){
 		error: function(xhr, status, err){
 			alert("Some error occured");
 		}
-
 	})
 })
+
+$("#rate-button").click(function(){
+
+	rating = $("#rate").val()
+	if(rating=='' || rating<0 || rating>10 || rating % 1 != 0)
+	{
+        alert('Rate should be an integer within the range of 0-10 only');
+		return;
+	}
+
+    $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+			bid: {{ book.id }},
+			brate: $("#rate").val()
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+                alert("Book Rated successfully");
+                window.location.replace("/store/books");
+			}
+			else{
+				alert("Unable to rate this book");
+			}
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+	})    
+})
+
 </script>
 {% endblock %}

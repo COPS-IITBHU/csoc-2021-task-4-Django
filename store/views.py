@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from store.models import *
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from datetime import datetime
 
 # Create your views here.
 
@@ -17,7 +19,11 @@ def bookDetailView(request, bid):
         'num_available': None, # set this to the number of copies of the book available, or 0 if the book isn't available
     }
     # START YOUR CODE HERE
-    
+    books = Book.objects.get(id=bid)
+    context['book'] = books
+    book_num = BookCopy.objects.filter(book = books, status = True)
+
+    context['num_available'] = len(book_num)
     
     return render(request, template_name, context=context)
 
@@ -31,7 +37,19 @@ def bookListView(request):
     }
     get_data = request.GET
     # START YOUR CODE HERE
+
+    book_list = Book.objects.all()
+
+    if get_data.get('title') != None:
+        book_list = book_list.filter(title__icontains=get_data.get('title'))
     
+    if get_data.get('author') != None:   
+        book_list = book_list.filter(author__icontains=get_data.get('author'))
+        
+    if get_data.get('genre') != None:
+        book_list = book_list.filter(genre__icontains=get_data.get('genre'))
+               
+    context['books'] = book_list
     
     return render(request, template_name, context=context)
 
@@ -46,9 +64,9 @@ def viewLoanedBooks(request):
     BookCopy model. Only those book copies should be included which have been loaned by the user.
     '''
     # START YOUR CODE HERE
+    loaned_book = BookCopy.objects.filter(borrower = request.user)
+    context['books'] = loaned_book
     
-
-
     return render(request, template_name, context=context)
 
 @csrf_exempt
@@ -62,8 +80,18 @@ def loanBookView(request):
     If yes, then set the message to 'success', otherwise 'failure'
     '''
     # START YOUR CODE HERE
-    book_id = None # get the book id from post data
+    book_id = request.POST.get('bid')
 
+    books = Book.objects.get(id=book_id)
+    book_copy = BookCopy.objects.filter(book = books)
+    response_data['message'] = 'failure'
+    for x in book_copy:
+        if x.status == True:
+            response_data['message'] = 'success'
+            book_copy[0].borrower = request.user
+            book_copy[0].borrow_date = datetime.today()
+            book_copy[0].status = False
+            book_copy[0].save()
 
     return JsonResponse(response_data)
 
@@ -77,6 +105,60 @@ to make this feature complete
 @csrf_exempt
 @login_required
 def returnBookView(request):
-    pass
+    response_data = {
+        'message': None,
+    }
+   
+    book_id = request.POST.get('bid')
+
+    try:
+        book_copy = BookCopy.objects.get(id=book_id)
+        response_data['message'] = 'success'
+        book_copy.borrower = None
+        book_copy.borrow_date = None
+        book_copy.status = True
+        book_copy.save()
+    except:
+        response_data['message'] = 'failure'
+        
+
+    return JsonResponse(response_data)
 
 
+@csrf_exempt
+@login_required
+def rateBookView(request):
+    response_data = {
+        'message': None,
+    }
+
+    if request.POST:
+        book_id = request.POST.get('bid')
+        book_rate = request.POST.get('brate')
+
+        books = Book.objects.get(id=book_id)
+        rating1 = BookRating.objects.filter(book=books, user=request.user)
+
+        if len(rating1)==0:
+            new_rating = BookRating(book=books, user=request.user, rating=book_rate)
+            new_rating.save()
+        else:
+            for i in rating1:
+                i.rating = book_rate
+                i.save()
+
+        Calc_Rate=BookRating.objects.filter(book=books)
+        book_rate = 0
+        for r in Calc_Rate:
+            book_rate +=  r.rating
+        book_rate /= len(Calc_Rate)
+        book_rate = round(book_rate,2)
+
+        Book.objects.filter(id=book_id).update(rating=book_rate)
+        response_data['message']='success'
+        
+
+    else:
+        response_data['message']='failure'
+
+    return JsonResponse(response_data)

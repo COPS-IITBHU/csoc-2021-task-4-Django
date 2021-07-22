@@ -20,8 +20,18 @@
     <dd>Rs. {{ book.mrp }}</dd>
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
+		{%if user.is_authenticated%}
+		<dt>Rate this book on a scale of 1-10:</dt>
+		<dd><div class= "row">
+			<div class= "col-sm-1" column-width= "20%">
+			<input type= "number" name= "rating" id= "rating" min= "0" max= "10" value= "{{ RatingByLoggedInUser }}"></div>
+			<div class= "col-sm-1">
+			<button type="submit" id= "submit_rating_btn" class= "btn btn-primary">Submit</button>
+			</div>
+		</div></dd>
 </dl>
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+{%endif%}
 <script>
 $("#loan-button").click(function(){
     $.ajax({
@@ -44,6 +54,31 @@ $("#loan-button").click(function(){
 		}
 
 	})
+})
+
+$("#submit_rating_btn").click(function(){
+  $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+			bookid: {{ book.id }} ,
+      ratingOfTheBook: $("#rating").val()
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+                alert("Book successfully rated");
+                window.location.replace("/books/");
+			}
+			else{
+				alert("Unable to rate this book");
+			}
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+
+	})
+
 })
 </script>
 {% endblock %}

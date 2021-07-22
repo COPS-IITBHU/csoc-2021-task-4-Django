@@ -32,15 +32,14 @@ def bookListView(request):
         'books': None, # set this to the list of required books upon filtering using the GET parameters
                        # (i.e. the book search feature will also be implemented in this view)
     }
-    get_data = request.GET
     # START YOUR CODE HERE
     bookList=Book.objects.all()
     authorName=''
     title=''
     genre=''
-    if(get_data.get('title')) : authorName=get_data.get('title')
-    if(get_data.get('author')) : title=get_data.get('author')
-    if(get_data.get('genre')) : genre=get_data.get('genre')
+    if(request.GET.get('title')) : authorName=request.GET.get('title')
+    if(request.GET.get('author')) : title=request.GET.get('author')
+    if(request.GET.get('genre')) : genre=request.GET.get('genre')
     context['books']=bookList.filter(title__icontains=title,author__icontains=authorName,genre__icontains=genre)
 
     
@@ -60,7 +59,7 @@ def viewLoanedBooks(request):
     # START YOUR CODE HERE
     
     context['books']=BookCopy.objects.filter(borrower=request.user)
-    print("User who requested",request.user)
+    
     
 
 

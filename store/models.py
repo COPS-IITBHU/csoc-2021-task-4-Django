@@ -30,3 +30,11 @@ class BookCopy(models.Model):
         else:
             return f'{self.book.title} - Available'
 
+
+class RatingOfBook(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    ratingValue = models.PositiveIntegerField(null=True, blank=True)
+    userWhoRated = models.ForeignKey(User, related_name='user_who_rated', null=True, blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f'{self.ratingValue} of {(self.book).title}'

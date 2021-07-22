@@ -36,6 +36,7 @@ $("#loan-button").click(function(){
                 window.location.replace("/books/loaned");
 			}
 			else{
+				console.log(data['message']);
 				alert("Unable to issue this book");
 			}
 		},

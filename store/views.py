@@ -141,20 +141,23 @@ def rateBookView(request):
             try:
                 book = Book.objects.get(pk=bid)
                 user = User.objects.get(username = request.user.username)
-                previous_user_rating = BookRating.objects.filter(book=book, user=user)
-                previous_user_rating.delete()
-                new_book_rating = BookRating()
-                new_book_rating.user = user
-                new_book_rating.book = book
-                new_book_rating.rating = new_rating
-                new_book_rating.save()
+                try:
+                    previous_user_rating = BookRating.objects.get(book=book, user=user)
+                except ObjectDoesNotExist:
+                    previous_user_rating = BookRating()
+                if previous_user_rating.rating is None:
+                    previous_user_rating.book = book
+                    previous_user_rating.user = user
+                previous_user_rating.rating = new_rating
+                previous_user_rating.save()
                 book.rating = BookRating.objects.filter(book=book).aggregate(rating=Avg('rating'))['rating']
+                book.rating = round(book.rating, 2)
                 book.save()
             except:
                 return JsonResponse({'message': 'error'})
             else:
-                return JsonResponse({'message' : 'success'})
+                return JsonResponse({'message': 'success'})
         else:
-            return JsonResponse({'message' : 'Rating must be from 0 to 10'})
+            return JsonResponse({'message': 'Rating must be from 0 to 10'})
     else:
-        return JsonResponse({'message':"invalid request method"})
+        return JsonResponse({'message': "invalid request method"})

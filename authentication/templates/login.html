@@ -7,15 +7,15 @@
 <form action="{% url 'Login' %}" method="POST">
     <h1 style="display: flex; justify-content:center;">Login</h1>
     {% csrf_token %}
-    <div class="form-group">
-        <label>Username:</label>
-        <input class="form-control" type="text" name="Username" id="username" required>
+    <div class="form-floating form-group mb-3">
+        <input type="text" class="form-control" id="username" name="Username" placeholder="Username" required>
+        <label for="floatingInput">Username</label>
     </div>
-    <div class="form-group">
-        <label>Password:</label>
-        <input class="form-control" type="password" name="Password" id="password" required>
+    <div class="form-floating form-group">
+        <input type="password" class="form-control" id="password" name="Password" placeholder="Password" required>
+        <label for="floatingPassword">Password</label>
     </div>
-    <button type="login" class="btn btn-primary" value="Login">Login</button>
+    <button type="login" class="btn btn-success mt-3 mb-2" value="Login">Login</button>
     <div style="color: red; text-align: center;">
         {% if message %}
             {{message}}

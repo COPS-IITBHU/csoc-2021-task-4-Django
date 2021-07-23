@@ -1,0 +1,89 @@
+{% extends "baseauth.html" %}
+
+{% block title %}
+<title>Register - Library</title>
+{% endblock %}
+
+{% block link_active %}
+<li class="nav-item active">
+    <a class="nav-link" href="/register/">Register<span class="sr-only">(current)</span></a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="/accounts/login/">Login</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="/">Home</a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div style="padding-left:6%; max-width:70%; padding-top:6%;">
+    <div style="padding-bottom:10px">
+        <span style="color:grey;font-size:20px;">
+            Register
+        </span>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label>First Name</label>
+            <input type="text" class="form-control" id="inputFirstName">
+        </div>
+        <div class="form-group col-md-6">
+            <label>Last Name</label>
+            <input type="text" class="form-control" id="inputLastName">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" class="form-control" id="inputEmail">
+    </div>
+    <div class="form-group">
+        <label>Username</label>
+        <input type="username" class="form-control" id="inputUsername">
+    </div>
+    <div class="form-group">
+        <label for="inputAddress2">Password</label>
+        <input type="Password" class="form-control" id="inputPassword">
+    </div>
+    <button class="btn btn-outline-success my-2 my-sm-0" id="register-button" type="submit">Register</button><br><br>
+    <div>Already a user? <a href="/accounts/login/">Login!</a></div>
+</div>
+</div>
+
+<script>
+    $("#register-button").click(function () {
+        firstname = $("#inputFirstName").val();
+        lastname = $("#inputLastName").val();
+        email = $("#inputEmail").val();
+        username = $("#inputUsername").val();
+        password = $("#inputPassword").val();
+        if (firstname === '' || lastname === '' || email === '' || username === '' || password === '') {
+            alert("Please fill all the fields correctly.");
+            return;
+        }
+        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        $.ajax({
+            url: "{% url 'register' %}",
+            method: "POST",
+            data: {
+                firstname: firstname,
+                lastname: lastname,
+                email: email,
+                username: username,
+                password: password,
+            },
+            success: function (data, status, xhr) {
+                alert("Registered successfully.");
+                window.location.replace("/");
+            },
+            error: function (xhr, status, err) {
+                alert("A user with this username already exists. Try another username.");
+            }
+        })
+    })
+</script>
+{% endblock %}

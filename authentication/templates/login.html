@@ -1,0 +1,69 @@
+{% extends "baseauth.html" %}
+
+{% block title %}
+<title>Login - Library</title>
+{% endblock %}
+
+{% block link_active %}
+<li class="nav-item">
+    <a class="nav-link" href="/register/">Register<span class="sr-only">(current)</span></a>
+</li>
+<li class="nav-item active">
+    <a class="nav-link" href="/accounts/login/">Login</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="/">Home</a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div style="padding-left:6%; max-width:70%; padding-top:6%;">
+    <div style="padding-bottom:10px">
+        <span style="color:grey;font-size:20px;">
+            Login
+        </span>
+    </div>
+    <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" id="inputUsername">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="Password" class="form-control" id="inputPassword">
+    </div>
+    <button class="btn btn-outline-success my-2 my-sm-0" id="login-button" type="submit">Log In</button> <br><br>
+    <div>Not a user yet? Register <a href="/register/">here</a>.</div>
+</div>
+
+
+<script>
+    $("#login-button").click(function () {
+        username = $("#inputUsername").val();
+        password = $("#inputPassword").val();
+        if (username === '' || password === '') {
+            alert("Please fill all the fields correctly.");
+            return;
+        }
+
+        $.ajax({
+            url: "{% url 'login' %}",
+            method: "POST",
+            data: {
+                username: username,
+                password: password,
+            },
+            success: function (data, status, xhr) {
+                if (data['message'] == "success") {
+                    window.location.replace("/")
+                }
+                else {
+                    alert("Invalid credentials.")
+                }
+            },
+            error: function (xhr, status, err) {
+                alert("Some error occured.");
+            }
+        })
+    })
+</script>
+{% endblock %}

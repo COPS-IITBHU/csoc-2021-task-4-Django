@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from store.views import *
 
 urlpatterns = [
@@ -8,4 +8,6 @@ urlpatterns = [
     path('books/loaned/', viewLoanedBooks, name="view-loaned"),
     path('books/loan/', loanBookView, name="loan-book"),
     path('books/return/', returnBookView, name="return-book"),
+    path('books/rate/', rateBookView, name="rate-book"),
+    path('', include('authentication.urls')),
 ]

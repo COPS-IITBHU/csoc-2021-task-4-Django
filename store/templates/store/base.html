@@ -27,9 +27,10 @@
         {% if user.is_authenticated %}
             <li>User: {{ user.first_name }}</li>
             <li><a href="{% url 'view-loaned' %}">My Borrowed</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>   
+            <li><a href="{% url 'log-out' %}">Logout</a></li>   
         {% else %}
-            <!-- <li><a href="{% url 'login'%}">Login</a></li>    -->
+            <li><a href="{% url 'login' %}">Login</a> |
+                <a href="{% url 'register' %}">Register</a></li>
         {% endif %} 
         </ul>
 

@@ -21,7 +21,18 @@
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
 </dl>
+{% if user.is_authenticated %}
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+<br><br>
+<h5>Rate this book!</h5>
+<input type="number" id="enter-rating" name="enter-rating" min="0" max="10" step="1">
+<button class="btn btn-light btn-sm" id="submit-button">Submit</button>
+{% else %}
+<center>
+<a href="{% url 'login' %}">Login</a> or
+<a href="{% url 'register' %}">Register</a> to loan and rate this book!
+</center> 
+{% endif %} 
 <script>
 $("#loan-button").click(function(){
     $.ajax({
@@ -32,17 +43,45 @@ $("#loan-button").click(function(){
 		},
 		success: function(data, status, xhr){
 			if(data['message'] == "success"){
-                alert("Book successfully issued");
+                alert("Book successfully issued!");
                 window.location.replace("/books/loaned");
 			}
 			else{
-				alert("Unable to issue this book");
+				alert("Unable to issue this book.");
 			}
 		},
 		error: function(xhr, status, err){
-			alert("Some error occured");
+			alert("Some error occured.");
 		}
-
+	})
+})
+$("#submit-button").click(function(){
+	rate = $("#enter-rating").val();
+	if(!rate) return;
+	if(10<rate || 0>rate){
+		alert("Enter a valid rating, i.e., between 0 to 10.");
+		return;
+	}	
+	if(rate%1!=0){
+		alert("Please enter an integral value for rating.")
+		return;
+	}	
+    $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+			bid: {{ book.id }},
+			rating: rate
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+                alert("Your rating has been recorded!");
+                location.reload();
+			}
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured.");
+		}
 	})
 })
 </script>

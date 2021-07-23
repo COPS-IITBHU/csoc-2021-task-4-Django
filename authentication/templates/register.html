@@ -22,5 +22,7 @@
         </p>
         {% endfor %}
         <button type="submit" class="btn btn-primary">Register</button>
+        <h6>Already have an account? <a href="{% url 'Login' %}">Login</a></h6>
+        <h6><a href="{% url 'book-list' %}">I just want to view the books</a></h6>
     </form>
 {% endblock %}

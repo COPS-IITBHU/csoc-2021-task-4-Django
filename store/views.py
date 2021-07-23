@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from store.models import *
@@ -17,10 +18,13 @@ def bookDetailView(request, bid):
     template_name = 'store/book_detail.html'
     book = get_object_or_404(Book, id=bid)
     num_available = BookCopy.objects.filter(book=book, status=True).count()
-    try:
-        current_user_rated = BookRating.objects.get(book=book, user=request.user)
-    except ObjectDoesNotExist:
+    if request.user.is_anonymous:
         current_user_rated = None
+    else:
+        try:
+            current_user_rated = BookRating.objects.get(book=book, user=request.user)
+        except ObjectDoesNotExist:
+            current_user_rated = None
     context = {
         'book': book, # set this to an instance of the required book
         'num_available': num_available, # set this to the number of copies of the book available, or 0 if the book isn't available
@@ -88,9 +92,9 @@ def loanBookView(request):
         books = BookCopy.objects.filter(book=book, status=True)
 
         if books:
-            books[0].borrower = request.user
             books[0].borrow_date = timezone.datetime.today().date()
             books[0].status = False
+            books[0].borrower = request.user
             books[0].save()
             response_data['message'] = 'success'
         else:

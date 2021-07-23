@@ -16,12 +16,19 @@ class Book(models.Model):
     def __str__(self):
         return f'{self.title} by {self.author}'
 
+class UserRating(models.Model):
+    user=models.ForeignKey(User, related_name='user', null=True, blank=True, on_delete=models.SET_NULL)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    rating = models.FloatField(default=0)
+
+    def __str__(self):
+            return f'{self.book.title}'
 
 class BookCopy(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     borrow_date = models.DateField(null=True, blank=True)
     # True status means that the copy is available for issue, False means unavailable
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
     borrower = models.ForeignKey(User, related_name='borrower', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):

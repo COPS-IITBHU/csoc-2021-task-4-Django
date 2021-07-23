@@ -19,10 +19,10 @@
     <div class="col-sm-3">
         Genre: <input type="text" name="genre" id="genre">
     </div>
+
+    <div>  <button id="search_button" class="btn btn-primary">Search</button></div>
 </div>
-<div class="row">
-    <button id="search_button" class="btn btn-primary">Search</button>
-</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -47,6 +47,10 @@
         {% endfor %}
     </tbody>
 </table>
+{% for book in books %}
+{%empty%}
+<h6 style="color: red;">No Result found</h6>
+{% endfor %}
 <script>
 
 var base_url=location.protocol + '//' + location.host + location.pathname;

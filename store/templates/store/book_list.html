@@ -37,10 +37,10 @@
         {% for book in books %}
         <tr>
         <th scope="row">{{ forloop.counter }}</th>
-        <td><a href="/book/{{ book.id }}/">{{ book.title }}</a></td>
+        <td><a href="/store/book/{{ book.id }}/">{{ book.title }}</a></td>
         <td>{{ book.author }}</td>
         <td>{{ book.genre }}</td>
-        <td>{{ book.rating }}</td>
+        <td>{{ book.rating|floatformat:2 }}</td>
         <td>{{ book.mrp }}</td>
         </tr>
         {% endfor %}

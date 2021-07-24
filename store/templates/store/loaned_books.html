@@ -25,7 +25,7 @@
         {% for copy in books %}
         <tr>
         <th scope="row">{{ forloop.counter }}</th>
-        <td><a href="/book/{{copy.book.id}}/">{{ copy.book.title }}</a></td>
+        <td><a href="/store/book/{{copy.book.id}}/">{{ copy.book.title }}</a></td>
         <td>{{ copy.book.author }}</td>
         <td>{{ copy.book.genre }}</td>
         <td>{{ copy.borrow_date }}</td>

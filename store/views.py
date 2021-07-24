@@ -117,7 +117,7 @@ def rateBook(request):
     if book:
         boo_k=Book.objects.filter(id=request.POST['bid'])[0]
         try:
-            ratingbook=BookRate.objects.filter(book_rated=boo_k)[0]
+            ratingbook=BookRate.objects.filter(book_rated=boo_k,user_name=request.user)[0]
             num=boo_k.total_rated
             boo_k.rating=(num*(boo_k.rating)-ratingbook.user_rating+int(request.POST['rating']))/num
             boo_k.save()

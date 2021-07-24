@@ -4,6 +4,7 @@ from store.models import *
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from datetime import date
 
 # Create your views here.
 
@@ -17,7 +18,11 @@ def bookDetailView(request, bid):
         'num_available': None, # set this to the number of copies of the book available, or 0 if the book isn't available
     }
     # START YOUR CODE HERE
-    
+    try:
+        context['book'] = Book.objects.get(pk=bid)
+        context['num_available'] = len(BookCopy.objects.filter(book=context['book']).filter(status=True))
+    except Book.DoesNotExist:
+        context['num_available'] = 0
     
     return render(request, template_name, context=context)
 
@@ -31,8 +36,19 @@ def bookListView(request):
     }
     get_data = request.GET
     # START YOUR CODE HERE
-    
-    
+
+    get_data = request.GET
+    filteredBooks = Book.objects.all()
+    if 'author' in get_data:
+        if len(get_data['author']) != 0:
+            filteredBooks = filteredBooks.filter(author=get_data['author'])
+    if 'genre' in get_data:
+        if len(get_data['genre']) != 0:
+            filteredBooks = filteredBooks.filter(genre=get_data['genre'])
+    if 'title' in get_data:
+        if len(get_data['title']) != 0:
+            filteredBooks = filteredBooks.filter(title=get_data['title'])        
+    context['books'] = filteredBooks
     return render(request, template_name, context=context)
 
 @login_required
@@ -46,25 +62,45 @@ def viewLoanedBooks(request):
     BookCopy model. Only those book copies should be included which have been loaned by the user.
     '''
     # START YOUR CODE HERE
-    
-
+    bookCopys = BookCopy.objects.all()
+    loanedByUser = []
+    user = request.user
+    for bookCopy in bookCopys:
+        if(bookCopy.borrower) == user:
+            loanedByUser.append(bookCopy)
+            
+    context['books'] = loanedByUser        
 
     return render(request, template_name, context=context)
 
 @csrf_exempt
 @login_required
 def loanBookView(request):
-    response_data = {
-        'message': None,
-    }
     '''
     Check if an instance of the asked book is available.
     If yes, then set the message to 'success', otherwise 'failure'
     '''
     # START YOUR CODE HERE
-    book_id = None # get the book id from post data
-
-
+    # get the book id from post data
+    response_data = {
+        'message': 'failure',
+    }
+    '''
+    Check if an instance of the asked book is available.
+    If yes, then set the message to 'success', otherwise 'failure'
+    '''
+    # # START YOUR CODE HERE
+    # bId = request.POST['bid'] # get the book id from post data
+    # book = Book.objects.get(pk=bId)
+    # if book.num_avail > 0:
+    #     response_data['message'] = 'success'
+    # return JsonResponse(response_data)
+    book_id = int(request.POST['bid']) # get the book id from post data
+    book=Book.objects.filter(id=book_id)[0]
+    bookCopy=BookCopy.objects.filter(book=book).filter(status=True)
+    if len(bookCopy)>0:
+        response_data['message']='success'
+        BookCopy.objects.filter(id=bookCopy[0].id).update(borrow_date=date.today(),borrower=request.user,status=False)
     return JsonResponse(response_data)
 
 '''
@@ -77,6 +113,12 @@ to make this feature complete
 @csrf_exempt
 @login_required
 def returnBookView(request):
-    pass
+    response_data = {
+        'message': 'failure',
+    }
+    bId = int(request.POST['book_id']) 
+    BookCopy.objects.filter(id=bId).update(borrower=None,status=True,borrow_date=None)
+    response_data['message']='success'
+    return JsonResponse(response_data)
 
 

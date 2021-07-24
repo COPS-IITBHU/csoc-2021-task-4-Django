@@ -1,0 +1,48 @@
+{% extends "store/base.html" %}
+
+{% block title %}
+<title>
+    Sign in | Library
+</title>
+{% endblock %}
+
+{% block content %}
+
+    {% if messages %}
+    <h5 style="text-align:center;">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+    </h5>
+    <hr style="border-width: 5px">
+    {% endif %}
+
+<h2>Sign In</h2>
+<form action="" method="POST">
+    {% csrf_token %}
+    <label for="first_name">First name: </label><br>
+    <input id="first_name" type="text" name="first_name" required>
+    <br><br>
+    <label for="last_name">Last name: </label><br>
+    <input id="last_name" type="text" name="last_name" required>
+    <br><br>
+    <label for="email">Email: </label><br>
+    <input id="email" type="email" name="email" required>
+    <br><br>
+    <label for="username">Username: </label><br>
+    <input id="username" type="text" name="username" required>
+    <br><br>
+    Password must contain at least one number, one uppercase, one lowercase letter, and at least 8 or more characters 
+    <br><br>
+    <label for="password">Enter password: </label><br>
+    <input id="password" type="password" name="password" 
+    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
+    title="Must contain at least one number, one uppercase, one lowercase letter, and at least 8 or more characters" 
+    required>
+    <br><br>
+    <label for="passConf">Confirm password: </label><br>
+    <input id="passConf" type="password" name="passConf">
+    <br><br><br>
+    <button type="submit">Sign In</button>
+</form>
+{% endblock %}

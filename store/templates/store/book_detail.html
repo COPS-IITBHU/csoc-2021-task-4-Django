@@ -22,6 +22,22 @@
     <dd>{{ num_available }}</dd>
 </dl>
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+{% if user.is_authenticated %}
+<br><br><br>
+<h5>Rate this book from 0 to 10: </h5> <input type="text" name="rating" id="rating"><br>
+<h6>Leave comments below: </h6>
+<textarea rows = "5" cols = "60" name = "desc" id= "desc"></textarea><br>
+<button class="btn btn-primary" id="rate-button">Rate {{ book.title }}</button>
+<br><br><hr style="border-width: 5px">
+    <h4>See recent customer reviews</h4>
+    {% for bookRating in book_allRatings %}
+        <hr>
+		<h5>{{ bookRating.ratedBy }} : {{ bookRating.rating }}</h5>
+		{% if bookRating.desc %}
+		<h6>{{ bookRating.desc }}</h6>
+		{% endif%}
+    {% endfor %}
+{% endif %}
 <script>
 $("#loan-button").click(function(){
     $.ajax({
@@ -45,5 +61,31 @@ $("#loan-button").click(function(){
 
 	})
 })
+
+$("#rate-button").click(function(){
+    $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+			bid: {{ book.id }},
+			rating: $("#rating").val(),
+			desc: $("#desc").val(),
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+                alert("Book successfully rated");
+                window.location.replace("/book/{{ book.id }}/");
+			}
+			else{
+				alert("Please enter valid rating");
+			}
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+
+	})
+})
+
 </script>
 {% endblock %}

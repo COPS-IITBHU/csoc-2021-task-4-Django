@@ -30,3 +30,14 @@ class BookCopy(models.Model):
         else:
             return f'{self.book.title} - Available'
 
+class BookRating(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    ratedBy = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.FloatField(default=0.0)
+    desc = models.TextField(null=True)
+    
+    class Meta:
+        ordering = ('rating',)
+
+    def __str__(self):
+        return f'{self.book} rated {self.rating} by {self.ratedBy}'

@@ -9,9 +9,10 @@ A very basic frontend has already been created for visualizing the results. You 
 
 ### Setting up the project
 
-- Make sure `python3.8` and `pip` are installed. Install `pipenv` by running `pip install pipenv`.
-- Install python dependencies using the command `pipenv install` Please use only pipenv for managing dependencies (Follow this [link](https://realpython.com/pipenv-guide/) if you are new to pipenv).
-- To activate this project's virtualenv, run `pipenv shell`.
+- Make sure `python` and `pip` are installed. Install [pyenv](https://github.com/pyenv/pyenv#installation) and [poetry](https://python-poetry.org/docs/#installation)
+- Install python version 3.7.10 using `pyenv install 3.7.10`
+- Activate python version using `pyenv local`
+- To activate this project's virtualenv, run `poetry shell` and then `poetry install` to install dependencies.
 - Run `python manage.py migrate` to apply migrations.
 - Start the development server using `python manage.py runserver`
 

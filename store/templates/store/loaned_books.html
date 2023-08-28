@@ -29,7 +29,7 @@
         <td>{{ copy.book.author }}</td>
         <td>{{ copy.book.genre }}</td>
         <td>{{ copy.borrow_date }}</td>
-        <td><button class="btn btn-primary" onclick="returnBook({{ copy.id }})">Return {{ copy.book.title }}</button></td>
+        <td><button class="btn btn-primary" onclick="returnBook({{ copy.book.id }})">Return {{ copy.book.title }}</button></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -37,7 +37,16 @@
 <script>
 // Fill in this function by yourself. It should make a post call to the returnBookView and display an appropriate message
 function returnBook(bid){
-    ;
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '../../books/return/', true);
+    xhr.getResponseHeader('Content-type', 'application/json');
+    xhr.onload = function(){
+        alert("Book Returned.");
+        location.reload();
+    }
+    var dict = {detail: bid};
+    pram = JSON.stringify(dict);
+    xhr.send(pram);
 }
 </script>
 {% endblock %}

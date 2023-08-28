@@ -15,14 +15,27 @@
     <dt>Description:</dt>
     <dd>{{ book.description }}</dd>
     <dt>Rating:</dt>
-    <dd>{{ book.rating }}</dd>
+    {% if book.rating == -1 %}
+        <dd>Unrated</dd>
+    {% else %}
+        <dd>{{ book.rating }}</dd>
+    {% endif %}
     <dt>MRP:</dt>
     <dd>Rs. {{ book.mrp }}</dd>
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
 </dl>
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+<button class="btn btn-primary" id="rate-button">Rate {{ book.title }}</button>
 <script>
+
+function isNumeric(str) {
+  if (typeof str != "string") return false
+  return !isNaN(str) &&
+         !isNaN(parseFloat(str))
+}
+
+
 $("#loan-button").click(function(){
     $.ajax({
 		url: "{% url 'loan-book' %}",
@@ -45,5 +58,39 @@ $("#loan-button").click(function(){
 
 	})
 })
+
+
+
+$("#rate-button").click(function(){
+    var rate = prompt("Please enter rating from 1 to 10 : ");
+    var num = parseInt(rate)
+    if(rate < 0 || rate > 10 || !(isNumeric(rate))){
+    alert("Enter a valid rating.");}
+    else{
+
+    $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+		    rate: num,
+			bid: {{ book.id }}
+		},
+		success: function(data, status, xhr){
+                alert("Book successfully rated.");
+                location.reload();
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+
+	})
+
+
+    }
+
+})
+
+
+
 </script>
 {% endblock %}
